@@ -73,7 +73,7 @@ const Sidebar = ({ handlelogout, user }) => {
           src={
             loggedinuser[0]?.profileImage
               ? loggedinuser[0].profileImage
-              : user && user.photoURL
+              : `https://ui-avatars.com/api/?name=${result}&background=random`
             // : "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"
           }
         />
@@ -110,7 +110,7 @@ const Sidebar = ({ handlelogout, user }) => {
               src={
                 loggedinuser[0]?.profileImage
                   ? loggedinuser[0]?.profileImage
-                  : user && user.photoURL
+                  : `https://ui-avatars.com/api/?name=${result}&background=random`
                 // : "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"
               }
             />

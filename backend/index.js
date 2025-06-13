@@ -7,38 +7,47 @@ const port = 5000;
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-const client = new MongoClient(uri);
+const client = new MongoClient(uri, {
+  serverApi: ServerApiVersion.v1
+});
 
 async function run() {
   try {
     await client.connect();
-    const postcollection = client.db("twitter-clone-database").collection("posts");
-    const usercollection = client.db("twitter-clone-database").collection("users");
+    console.log("✅ Connected to MongoDB Atlas");
+
+    const db = client.db("twitter-clone-database");
+    const postcollection = db.collection("posts");
+    const usercollection = db.collection("users");
+
+    // Your routes here...
     app.post("/register", async (req, res) => {
       const user = req.body;
-      // console.log(user)
       const result = await usercollection.insertOne(user);
       res.send(result);
     });
+
     app.get("/loggedinuser", async (req, res) => {
       const email = req.query.email;
-      const user = await usercollection.find({ email: email }).toArray();
+      const user = await usercollection.find({ email }).toArray();
       res.send(user);
     });
+
     app.post("/post", async (req, res) => {
       const post = req.body;
       const result = await postcollection.insertOne(post);
       res.send(result);
     });
+
     app.get("/post", async (req, res) => {
       const post = (await postcollection.find().toArray()).reverse();
       res.send(post);
     });
+
     app.get("/userpost", async (req, res) => {
       const email = req.query.email;
       const post = (
-        await postcollection.find({ email: email }).toArray()
+        await postcollection.find({ email }).toArray()
       ).reverse();
       res.send(post);
     });
@@ -49,18 +58,25 @@ async function run() {
     });
 
     app.patch("/userupdate/:email", async (req, res) => {
-      const filter = req.params;
+      const filter = { email: req.params.email }; // ✅ Correct usage
       const profile = req.body;
       const options = { upsert: true };
       const updateDoc = { $set: profile };
-      // console.log(profile)
-      const result = await usercollection.updateOne(filter, updateDoc, options);
-      res.send(result);
+
+      try {
+        const result = await usercollection.updateOne(filter, updateDoc, options);
+        res.send(result);
+      } catch (error) {
+        console.error("Error updating user:", error);
+        res.status(500).send({ error: "Failed to update user." });
+      }
     });
+    
   } catch (error) {
-    console.log(error);
+    console.error("❌ MongoDB connection error:", error);
   }
 }
+
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
@@ -68,5 +84,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Twitter-Clone clone is workingon ${port}`);
+  console.log(`🚀 Server running on http://localhost:${port}`);
 });

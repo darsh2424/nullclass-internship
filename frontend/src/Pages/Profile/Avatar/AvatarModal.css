@@ -1,0 +1,34 @@
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.avatar-option {
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.avatar-option:hover {
+  transform: scale(1.05);
+}
+
+.avatar-option.selected {
+  border-color: #1976d2;
+}
+
+.avatar-preview {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.avatar-large {
+  width: 120px;
+  height: 120px;
+  margin: 10px auto;
+  display: block;
+}

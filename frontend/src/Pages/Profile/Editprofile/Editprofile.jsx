@@ -1,9 +1,6 @@
-import React, { useState } from "react";
-import { Box, Modal } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Modal, IconButton, TextField } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { IconButton } from "@mui/material";
-import TextField from "@mui/material/TextField";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import "./Editprofile.css";
 
 const style = {
@@ -20,91 +17,87 @@ const style = {
 
 function Editchild({ dob, setdob }) {
   const [open, setopen] = useState(false);
-  const handleopen = () => {
-    setopen(true);
-  };
-  const handleclose = () => {
-    setopen(false);
-  };
+
+  const handleopen = () => setopen(true);
+  const handleclose = () => setopen(false);
+
   return (
-    <React.Fragment>
+    <>
       <div className="birthdate-section" onClick={handleopen}>
-        <text>Edit</text>
+        <span>Edit</span>
       </div>
       <Modal
         hideBackdrop
         open={open}
         onClose={handleclose}
         aria-labelledby="child-modal-title"
-        aria-describedby="child-modal-descriptiom"
+        aria-describedby="child-modal-description"
       >
         <Box sx={{ ...style, width: 300, height: 300 }}>
           <div className="text">
             <h2>Edit date of birth</h2>
-            <p>
-              This can only be changed a few times
-              <br />
-              Make sure you enter the age of the <br />
-              person using the account.{" "}
-            </p>
-            <input type="date" onChange={(e) => setdob(e.target.value)} />
+            <input
+              type="date"
+              value={dob}
+              onChange={(e) => setdob(e.target.value)}
+            />
             <button
               className="e-button"
-              onClick={() => {
-                setopen(false);
-              }}
+              onClick={handleclose}
             >
               Cancel
             </button>
           </div>
         </Box>
       </Modal>
-    </React.Fragment>
+    </>
   );
 }
 
-const Editprofile = ({ user, loggedinuser }) => {
+const Editprofile = ({ user, loggedinuser,handleProfileClick }) => {
   const [name, setname] = useState("");
   const [bio, setbio] = useState("");
   const [location, setlocation] = useState("");
   const [website, setwebsite] = useState("");
   const [open, setopen] = useState(false);
   const [dob, setdob] = useState("");
+
+  // Prefill form when modal opens
+  useEffect(() => {
+    if (open && loggedinuser[0]) {
+      setname(loggedinuser[0].name || "");
+      setbio(loggedinuser[0].bio || "");
+      setlocation(loggedinuser[0].location || "");
+      setwebsite(loggedinuser[0].website || "");
+      setdob(loggedinuser[0].dob || "");
+    }
+  }, [open, loggedinuser]);
+
   const handlesave = () => {
-    const editinfo = {
-      name,
-      bio,
-      location,
-      website,
-      dob,
-    };
+    const editinfo = { name, bio, location, website, dob };
     fetch(`http://localhost:5000/userupdate/${user?.email}`, {
       method: "PATCH",
       headers: {
-        "content-type": "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(editinfo),
     })
       .then((res) => res.json())
-      .then((data) => {
-        console.log("done", data);
+      .then(() => {
+        alert("Profile updated successfully!");
+        setopen(false);
       });
   };
+
   return (
     <div>
-      <button
-        onClick={() => {
-          setopen(true);
-        }}
-        className="Edit-profile-btn"
-      >
+      <button onClick={() => setopen(true)} className="Edit-profile-btn">
         Edit profile
       </button>
-      <Modal
-        open={open}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-descriptiom"
-      >
+      
+      <button className="Edit-profile-btn" onClick={handleProfileClick}>Edit Profile Photo</button>
+
+      <Modal open={open} onClose={() => setopen(false)}>
         <Box style={style} className="modal">
           <div className="header">
             <IconButton onClick={() => setopen(false)}>
@@ -113,63 +106,50 @@ const Editprofile = ({ user, loggedinuser }) => {
             <h2 className="header-title">Edit Profile</h2>
             <button className="save-btn" onClick={handlesave}>Save</button>
           </div>
+
           <form className="fill-content">
             <TextField
               className="text-field"
               fullWidth
               label="Name"
-              id="fullWidth"
               variant="filled"
+              value={name}
               onChange={(e) => setname(e.target.value)}
-              deafultValue={loggedinuser[0]?.name ? loggedinuser[0].name : ""}
             />
             <TextField
               className="text-field"
               fullWidth
               label="Bio"
-              id="fullWidth"
               variant="filled"
+              value={bio}
               onChange={(e) => setbio(e.target.value)}
-              deafultValue={loggedinuser[0]?.bio ? loggedinuser[0].bio : ""}
             />
             <TextField
               className="text-field"
               fullWidth
               label="Location"
-              id="fullWidth"
               variant="filled"
+              value={location}
               onChange={(e) => setlocation(e.target.value)}
-              deafultValue={
-                loggedinuser[0]?.location ? loggedinuser[0].location : ""
-              }
             />
             <TextField
               className="text-field"
               fullWidth
               label="Website"
-              id="fullWidth"
               variant="filled"
+              value={website}
               onChange={(e) => setwebsite(e.target.value)}
-              deafultValue={
-                loggedinuser[0]?.website ? loggedinuser[0].website : ""
-              }
             />
           </form>
+
           <div className="birthdate-section">
             <p>Birth Date</p>
             <p>:</p>
             <Editchild dob={dob} setdob={setdob} />
           </div>
+
           <div className="last-section">
-            {loggedinuser[0]?.dob ? (
-              <h2>{loggedinuser[0]?.dob}</h2>
-            ) : (
-              <h2>{dob ? dob : "Add your date of birth"}</h2>
-            )}
-            {/* <div className="last-btn">
-              <h2>Switch to Professional</h2>
-              <ChevronRightIcon />
-            </div> */}
+            <h2>{dob ? dob : "Add your date of birth"}</h2>
           </div>
         </Box>
       </Modal>

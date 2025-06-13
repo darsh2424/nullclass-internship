@@ -10,12 +10,21 @@ import AddLinkIcon from "@mui/icons-material/AddLink";
 import Editprofile from "../Editprofile/Editprofile";
 import axios from "axios";
 import useLoggedinuser from "../../../hooks/useLoggedinuser";
+import AvatarModal from "../Avatar/AvatarModal";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import { IconButton } from "@mui/material";
+
+
 const Mainprofile = ({ user }) => {
   const navigate = useNavigate();
   const [isloading, setisloading] = useState(false);
   const [loggedinuser] = useLoggedinuser();
   const username = user?.email?.split("@")[0];
   const [post, setpost] = useState([]);
+  const [avatarModalOpen, setAvatarModalOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const isMenuOpen = Boolean(anchorEl);
 
   useEffect(() => {
     fetch(`http://localhost:5000/userpost?email=${user?.email}`)
@@ -54,7 +63,8 @@ const Mainprofile = ({ user }) => {
           })
             .then((res) => res.json())
             .then((data) => {
-              console.log("done", data);
+              // console.log("done", data);
+              alert("Success!")
             });
         }
       })
@@ -93,7 +103,8 @@ const Mainprofile = ({ user }) => {
           })
             .then((res) => res.json())
             .then((data) => {
-              console.log("done", data);
+              // console.log("done", data);
+            alert("Success!")
             });
         }
       })
@@ -103,6 +114,32 @@ const Mainprofile = ({ user }) => {
         setisloading(false);
       });
   };
+  const handleProfileClick = (event) => setAnchorEl(event.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
+
+  const handleRemovePhoto = () => {
+    fetch(`http://localhost:5000/userupdate/${user?.email}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ profileImage: null }),
+    }).then((res) => res.json())
+      .then(() => {
+        window.location.reload(); 
+      });
+    handleMenuClose();
+  };
+
+  const handleAvatarSelect = (url) => {
+    fetch(`http://localhost:5000/userupdate/${user?.email}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ profileImage: url }),
+    }).then((res) => res.json())
+      .then(() => {
+        window.location.reload(); 
+      });
+  };
+
   return (
     <div>
       <ArrowBackIcon className="arrow-icon" onClick={() => navigate("/")} />
@@ -145,29 +182,41 @@ const Mainprofile = ({ user }) => {
                     src={
                       loggedinuser[0]?.profileImage
                         ? loggedinuser[0].profileImage
-                        : user && user.photoURL
+                        : `https://ui-avatars.com/api/?name=${username}&background=random`
                     }
                     alt=""
                     className="avatar"
+                    onClick={handleProfileClick}
                   />
-                  <div className="hoverAvatarImage">
-                    <div className="imageIcon_tweetButton">
-                      <label htmlFor="profileImage" className="imageIcon">
-                        {isloading ? (
-                          <LockResetIcon className="photoIcon photoIconDisabled" />
-                        ) : (
-                          <CenterFocusWeakIcon className="photoIcon" />
-                        )}
+
+                  <Menu anchorEl={anchorEl} open={isMenuOpen} onClose={handleMenuClose}>
+                    <MenuItem>
+                      <label htmlFor="uploadPhotoInput" className="menu-label">
+                        Choose Photo from Device
                       </label>
                       <input
                         type="file"
-                        id="profileImage"
-                        className="imageInput"
-                        onChange={handleuploadprofileimage}
+                        id="uploadPhotoInput"
+                        accept="image/*"
+                        onChange={(e) => {
+                          handleuploadprofileimage(e);
+                          handleMenuClose();
+                        }}
+                        style={{ display: "none" }}
                       />
-                    </div>
-                  </div>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        setAvatarModalOpen(true);
+                        handleMenuClose();
+                      }}
+                    >
+                      Select Avatar
+                    </MenuItem>
+                    <MenuItem onClick={handleRemovePhoto}>Remove Photo</MenuItem>
+                  </Menu>
                 </div>
+
                 <div className="userInfo">
                   <div>
                     <h3 className="heading-3">
@@ -177,7 +226,7 @@ const Mainprofile = ({ user }) => {
                     </h3>
                     <p className="usernameSection">@{username}</p>
                   </div>
-                  <Editprofile user={user} loggedinuser={loggedinuser} />
+                  <Editprofile user={user} loggedinuser={loggedinuser} handleProfileClick={handleProfileClick} />
                 </div>
                 <div className="infoContainer">
                   {loggedinuser[0]?.bio ? <p>{loggedinuser[0].bio}</p> : ""}
@@ -208,6 +257,12 @@ const Mainprofile = ({ user }) => {
           }
         </div>
       </div>
+
+      <AvatarModal
+        open={avatarModalOpen}
+        onClose={() => setAvatarModalOpen(false)}
+        onSelect={handleAvatarSelect}
+      />
     </div>
   );
 };

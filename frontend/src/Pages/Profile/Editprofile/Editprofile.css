@@ -118,7 +118,7 @@
   font-weight: 600;
   padding-left: 5px;
 }
-.birthdate-section text {
+.birthdate-section span {
   color: rgb(0, 175, 250);
   cursor: pointer;
   font-weight: 600;
