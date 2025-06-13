@@ -1,0 +1,40 @@
+.page {
+  flex: 1;
+  padding: 0 180px;
+  overflow-y: auto;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-right: 1px solid var(--twitter-background);
+}
+
+@media screen and (max-width: 1024px) {
+  .page {
+    padding: 0 60px;
+  }
+}
+
+@media screen and (max-width: 688px) {
+  .page {
+    padding: 0 15px;
+    border-right: none;
+  }
+}
+
+.profilePage {
+  flex: 0.4;
+  min-width: fit-content;
+  overflow-y: auto;
+  border-right: 1px solid var(--twitter-background);
+}
+
+.profilePage::-webkit-scrollbar {
+  display: none;
+}
+
+.pageTitle {
+  color: var(--twitter-color);
+  text-align: center;
+  font-size: 30px;
+}

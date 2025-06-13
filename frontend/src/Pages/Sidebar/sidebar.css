@@ -1,0 +1,92 @@
+.sidebar {
+  border-right: 1px solid var(--twitter-background);
+  flex: 0.25;
+  min-width: 150px;
+  margin-top: 20px;
+  padding-right: 20px;
+  overflow-y: auto;
+  height: 100vh;
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+.sidebar__twitterIcon {
+  color: var(--twitter-color);
+  font-size: 35px !important;
+  margin-left: 20px;
+  margin-bottom: 10px;
+}
+
+.sidebar__tweet {
+  background-color: var(--twitter-color) !important;
+  border: none !important;
+  color: white !important;
+  font-weight: 900 !important;
+  border-radius: 30px !important;
+  height: 50px !important;
+  margin-top: 10px !important;
+  text-transform: inherit !important;
+}
+
+.sidebar > .Profile__info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 40px;
+  margin-bottom: 10px;
+  border-radius: 9999px;
+  padding: 10px;
+}
+
+.user__info {
+  margin-left: 10px;
+}
+
+.subUser__info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.user__info > h4 {
+  font-size: 14px;
+}
+
+.user__info > h5 {
+  opacity: 0.5;
+}
+
+/* Mobile Sidebar as Bottom Navbar */
+@media screen and (max-width: 688px) {
+  .sidebar {
+    display:flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    border-right: none;
+    border-top: 1px solid var(--twitter-background);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background-color: white;
+    z-index: 1000;
+    padding: 10px 0;
+    height: auto;
+  }
+
+  .sidebar > .Profile__info,
+  .sidebar__tweet,.sidebar > .sidebar__twitterIcon {
+    display: none;
+  }
+
+  .sidebarOptions > h2 {
+    display: none;
+  }
+
+  .sidebarOptions > .MuiSvgIcon-root {
+    margin: 0 auto;
+  }
+}

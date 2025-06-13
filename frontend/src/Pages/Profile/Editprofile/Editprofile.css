@@ -1,0 +1,182 @@
+/* -------------------- Edit Profile -------------------- */
+.Edit-profile-btn {
+  background-color: var(--twitter-color);
+  color:white;
+  font:1.3rem;
+  padding: 10px;
+  border: 1px solid;
+  border-radius: 2rem;
+  margin-right: 20px;
+  cursor: pointer;
+}
+.Edit-profile-btn:hover {
+  background-color: rgb(207, 206, 206);
+}
+
+/* -------------------- Tweet Section -------------------- */
+.Tweet {
+  background-color: white;
+  width: 20%;
+  height: 20%;
+  padding: 2rem 1rem;
+  color: skyblue;
+}
+.tweetsText {
+  margin-top: 20px;
+  margin-left: 20px;
+  margin-bottom: 5px;
+}
+
+/* -------------------- Modal -------------------- */
+.modal {
+  background-color: white;
+  padding: 10px;
+  overflow-y: scroll;
+}
+.modal::-webkit-scrollbar {
+  display: none;
+}
+
+/* -------------------- Header -------------------- */
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 1;
+}
+.header > .header-title {
+  font-size: 20px;
+  font-weight: 400;
+  margin-left: 10px;
+}
+.header > .save-btn {
+  margin-right: 10px;
+  color: aliceblue;
+  background-color: black;
+  padding: 5px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+/* -------------------- Twitter Icon in Header -------------------- */
+.header__twittericon {
+  display: flex;
+  flex-direction: row;
+  background-color: white;
+  top: 0;
+  position: sticky;
+}
+.header__twittericon > .twitterIcon {
+  color: var(--twitter-color);
+  font-size: 35px !important;
+  margin-left: 250px;
+}
+
+/* -------------------- Modal Profile Form -------------------- */
+.backgroundImage {
+  height: 200px;
+  width: 100%;
+  background-color: #b4b7b9;
+  margin: 5px 0;
+}
+.profileTitle {
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+}
+.profileImage {
+  width: 134px;
+  height: 134px;
+  margin-top: -80px;
+  border-radius: 9999px;
+  background-color: var(--main-bg-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.profileImage > .MuiAvatar-root {
+  width: 134px;
+  height: 134px;
+  margin-left: 10px;
+}
+.fill-content {
+  margin: 20px;
+}
+.fill-content > .text-field {
+  padding-bottom: 10px;
+  border: none;
+}
+.birthdate-section {
+  display: flex;
+  align-items: center;
+  margin: 0px 0 0 20px;
+}
+.birthdate-section p {
+  font-weight: 600;
+  padding-left: 5px;
+}
+.birthdate-section text {
+  color: rgb(0, 175, 250);
+  cursor: pointer;
+  font-weight: 600;
+  /* padding-bottom: 30px; */
+  /* background:black; */
+}
+.text {
+  display: flex;
+  flex-direction: column;
+  margin: 30px;
+  justify-content: center;
+}
+.text > .e-button {
+  margin: 10px;
+  color: white;
+  background-color: black;
+  border-radius: 20px;
+}
+
+/* -------------------- Last Section -------------------- */
+.last-section h2 {
+  margin-left: 20px;
+}
+.last-section > .last-btn {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+  margin: 20px 0 60px;
+  cursor: pointer;
+}
+.last-section > .last-btn:hover {
+  background-color: #b4b7b9;
+}
+
+@media screen and (max-width: 688px) {
+  .Edit-profile-btn {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .avatarContainer {
+    height: 120px;
+    width: 120px;
+  }
+
+  .profileImage,
+  .profileImage > .MuiAvatar-root {
+    width: 120px;
+    height: 120px;
+  }
+
+  .header > .save-btn {
+    padding: 4px 14px;
+    font-size: 14px;
+  }
+
+  .header__twittericon > .twitterIcon {
+    margin-left: 150px;
+    font-size: 30px !important;
+  }
+}
