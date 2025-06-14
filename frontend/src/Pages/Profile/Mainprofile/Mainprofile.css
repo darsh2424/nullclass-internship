@@ -112,22 +112,26 @@
   color: darkgrey;
 }
 .profile-bio {
-  height: 100px;
+  height: 100px !important;
 }
 .infoContainer {
-  margin-left: 20px;
+  display: flex;
+  justify-content: start;
+  flex-wrap: wrap; 
+  gap: 10px;
   margin-top: 10px;
+  margin-left: 10px;
 }
 .locationAndLink {
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-top: 10px;
+  /* gap: 20px; */
+  /* margin-top: 10px; */
 }
 .subInfo {
   display: flex;
   align-items: center;
-  gap: 5px;
+  /* gap: 5px; */
 }
 .link {
   color: var(--twitter-color);

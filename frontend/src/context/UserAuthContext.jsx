@@ -9,28 +9,23 @@ import {
 } from "firebase/auth";
 import { auth } from "./firbase";
 
- const userAuthContext = createContext();
+const userAuthContext = createContext();
 
-export function UserAuthContextProvider( props ) {
-    const [user, setUser] = useState({});
+export function UserAuthContextProvider(props) {
+    const [user, setUser] = useState(null);
+    const [userDetails, setUserDetails] = useState(null);
 
     function logIn(email, password) {
         return signInWithEmailAndPassword(auth, email, password);
     }
     function signUp(email, password) {
-        
-         createUserWithEmailAndPassword(auth, email, password)
-         .then((userCredential) => {
-            // Signed up 
-            const user = userCredential.user;
-            // ...
-          })
-          .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            console.log(errorCode,errorMessage)
-            // ..
-          });
+        return createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                return userCredential.user;
+            })
+            .catch((error) => {
+                console.log(error.code, error.message);
+            });
     }
     function logOut() {
         return signOut(auth);
@@ -42,8 +37,21 @@ export function UserAuthContextProvider( props ) {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentuser) => {
-            console.log("Auth", currentuser);
             setUser(currentuser);
+
+            if (currentuser?.email) {
+                fetch(`http://localhost:5000/users/${currentuser.email}`)
+                    .then((res) => res.json())
+                    .then((data) => {
+                        setUserDetails(data); 
+                    })
+                    .catch((err) => {
+                        console.error("Error fetching backend user:", err);
+                        setUserDetails(null); 
+                    });
+            } else {
+                setUserDetails(null); 
+            }
         });
 
         return () => {
@@ -53,7 +61,7 @@ export function UserAuthContextProvider( props ) {
 
     return (
         <userAuthContext.Provider
-            value={{ user, logIn, signUp, logOut, googleSignIn }}
+            value={{ user, userDetails,setUserDetails, logIn, signUp, logOut, googleSignIn }}
         >
             {props.children}
         </userAuthContext.Provider>

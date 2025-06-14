@@ -13,31 +13,32 @@ import useLoggedinuser from "../../../hooks/useLoggedinuser";
 import AvatarModal from "../Avatar/AvatarModal";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { IconButton } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 
-
-const Mainprofile = ({ user }) => {
+const Mainprofile = () => {
   const navigate = useNavigate();
   const [isloading, setisloading] = useState(false);
-  const [loggedinuser] = useLoggedinuser();
-  const username = user?.email?.split("@")[0];
+  const [loggedinuser, setLoggedinuser, loading, setUserDetails] = useLoggedinuser();
   const [post, setpost] = useState([]);
   const [avatarModalOpen, setAvatarModalOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
 
+  const email = loggedinuser?.email;
+
   useEffect(() => {
-    fetch(`http://localhost:5000/userpost?email=${user?.email}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setpost(data);
-      });
-  }, [user.email]);
+    if (email) {
+      fetch(`http://localhost:5000/userpost?email=${email}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setpost(data);
+        });
+    }
+  }, [email]);
 
   const handleuploadcoverimage = (e) => {
     setisloading(true);
-    const image = e.target.files[0];
-    // console.log(image)
+    const image = e.target.files;
     const formData = new FormData();
     formData.set("image", image);
     axios
@@ -47,14 +48,13 @@ const Mainprofile = ({ user }) => {
       )
       .then((res) => {
         const url = res.data.data.display_url;
-        // console.log(res.data.data.display_url);
         const usercoverimage = {
-          email: user?.email,
+          email,
           coverimage: url,
         };
         setisloading(false);
         if (url) {
-          fetch(`http://localhost:5000/userupdate/${user?.email}`, {
+          fetch(`http://localhost:5000/userupdate/${email}`, {
             method: "PATCH",
             headers: {
               "content-type": "application/json",
@@ -62,22 +62,30 @@ const Mainprofile = ({ user }) => {
             body: JSON.stringify(usercoverimage),
           })
             .then((res) => res.json())
+            .then(() => {
+              return fetch(`http://localhost:5000/user?email=${loggedinuser?.email}`);
+            })
+            .then((res) => res.json())
             .then((data) => {
-              // console.log("done", data);
-              alert("Success!")
+              const updatedUser = Array.isArray(data) ? data[0] : data;
+              if (updatedUser) {
+                alert("Profile updated successfully!");
+                setUserDetails(updatedUser);
+                setLoggedinuser(updatedUser);
+              }
             });
         }
       })
       .catch((e) => {
         console.log(e);
-        window.alert(e);
+        alert("Upload failed");
         setisloading(false);
       });
   };
+
   const handleuploadprofileimage = (e) => {
     setisloading(true);
-    const image = e.target.files[0];
-    // console.log(image)
+    const image = e.target.files;
     const formData = new FormData();
     formData.set("image", image);
     axios
@@ -87,14 +95,13 @@ const Mainprofile = ({ user }) => {
       )
       .then((res) => {
         const url = res.data.data.display_url;
-        // console.log(res.data.data.display_url);
         const userprofileimage = {
-          email: user?.email,
+          email,
           profileImage: url,
         };
         setisloading(false);
         if (url) {
-          fetch(`http://localhost:5000/userupdate/${user?.email}`, {
+          fetch(`http://localhost:5000/userupdate/${email}`, {
             method: "PATCH",
             headers: {
               "content-type": "application/json",
@@ -102,43 +109,89 @@ const Mainprofile = ({ user }) => {
             body: JSON.stringify(userprofileimage),
           })
             .then((res) => res.json())
+            .then(() => {
+              return fetch(`http://localhost:5000/user?email=${loggedinuser?.email}`);
+            })
+            .then((res) => res.json())
             .then((data) => {
-              // console.log("done", data);
-            alert("Success!")
+              const updatedUser = Array.isArray(data) ? data[0] : data;
+              if (updatedUser) {
+                alert("Profile updated successfully!");
+                setUserDetails(updatedUser);
+                setLoggedinuser(updatedUser);
+              }
             });
         }
       })
       .catch((e) => {
         console.log(e);
-        window.alert(e);
+        alert("Upload failed");
         setisloading(false);
       });
   };
+
   const handleProfileClick = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
 
   const handleRemovePhoto = () => {
-    fetch(`http://localhost:5000/userupdate/${user?.email}`, {
+    fetch(`http://localhost:5000/userupdate/${email}`, {
       method: "PATCH",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ profileImage: null }),
-    }).then((res) => res.json())
+    })
+      .then((res) => res.json())
       .then(() => {
-        window.location.reload(); 
+        return fetch(`http://localhost:5000/user?email=${loggedinuser?.email}`);
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        const updatedUser = Array.isArray(data) ? data[0] : data;
+        if (updatedUser) {
+          alert("Profile updated successfully!");
+          setUserDetails(updatedUser);
+          setLoggedinuser(updatedUser);
+        }
       });
     handleMenuClose();
   };
 
   const handleAvatarSelect = (url) => {
-    fetch(`http://localhost:5000/userupdate/${user?.email}`, {
+    fetch(`http://localhost:5000/userupdate/${email}`, {
       method: "PATCH",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ profileImage: url }),
-    }).then((res) => res.json())
+    })
+      .then((res) => res.json())
       .then(() => {
-        window.location.reload(); 
+        return fetch(`http://localhost:5000/user?email=${loggedinuser?.email}`);
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        const updatedUser = Array.isArray(data) ? data[0] : data;
+        if (updatedUser) {
+          alert("Profile updated successfully!");
+          setUserDetails(updatedUser);
+          setLoggedinuser(updatedUser);
+        }
       });
   };
+
+  if (loading || !loggedinuser) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: 300,
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  const username = loggedinuser?.username;
 
   return (
     <div>
@@ -146,115 +199,113 @@ const Mainprofile = ({ user }) => {
       <h4 className="heading-4">{username}</h4>
       <div className="mainprofile">
         <div className="profile-bio">
-          {
-            <div>
-              <div className="coverImageContainer">
+          <div>
+            {/* Cover Image */}
+            <div className="coverImageContainer">
+              <img
+                src={
+                  loggedinuser?.coverimage
+                    ? loggedinuser.coverimage
+                    : `https://ui-avatars.com/api/?name=${username}&background=random`
+                }
+                alt=""
+                className="coverImage"
+              />
+              <div className="hoverCoverImage">
+                <div className="imageIcon_tweetButton">
+                  <label htmlFor="image" className="imageIcon">
+                    {isloading ? (
+                      <LockResetIcon className="photoIcon photoIconDisabled" />
+                    ) : (
+                      <CenterFocusWeakIcon className="photoIcon" />
+                    )}
+                  </label>
+                  <input
+                    type="file"
+                    id="image"
+                    className="imageInput"
+                    onChange={handleuploadcoverimage}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Avatar */}
+            <div className="avatar-img">
+              <div className="avatarContainer">
                 <img
                   src={
-                    loggedinuser[0]?.coverimage
-                      ? loggedinuser[0].coverimage
-                      : user && user.photoURL
+                    loggedinuser?.profileImage
+                      ? loggedinuser.profileImage
+                      : `https://ui-avatars.com/api/?name=${username}&background=random`
                   }
                   alt=""
-                  className="coverImage"
+                  className="avatar"
+                  onClick={handleProfileClick}
                 />
-                <div className="hoverCoverImage">
-                  <div className="imageIcon_tweetButton">
-                    <label htmlFor="image" className="imageIcon">
-                      {isloading ? (
-                        <LockResetIcon className="photoIcon photoIconDisabled" />
-                      ) : (
-                        <CenterFocusWeakIcon className="photoIcon" />
-                      )}
+                <Menu anchorEl={anchorEl} open={isMenuOpen} onClose={handleMenuClose}>
+                  <MenuItem>
+                    <label htmlFor="uploadPhotoInput" className="menu-label">
+                      Choose Photo from Device
                     </label>
                     <input
                       type="file"
-                      id="image"
-                      className="imageInput"
-                      onChange={handleuploadcoverimage}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="avatar-img">
-                <div className="avatarContainer">
-                  <img
-                    src={
-                      loggedinuser[0]?.profileImage
-                        ? loggedinuser[0].profileImage
-                        : `https://ui-avatars.com/api/?name=${username}&background=random`
-                    }
-                    alt=""
-                    className="avatar"
-                    onClick={handleProfileClick}
-                  />
-
-                  <Menu anchorEl={anchorEl} open={isMenuOpen} onClose={handleMenuClose}>
-                    <MenuItem>
-                      <label htmlFor="uploadPhotoInput" className="menu-label">
-                        Choose Photo from Device
-                      </label>
-                      <input
-                        type="file"
-                        id="uploadPhotoInput"
-                        accept="image/*"
-                        onChange={(e) => {
-                          handleuploadprofileimage(e);
-                          handleMenuClose();
-                        }}
-                        style={{ display: "none" }}
-                      />
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        setAvatarModalOpen(true);
+                      id="uploadPhotoInput"
+                      accept="image/*"
+                      onChange={(e) => {
+                        handleuploadprofileimage(e);
                         handleMenuClose();
                       }}
-                    >
-                      Select Avatar
-                    </MenuItem>
-                    <MenuItem onClick={handleRemovePhoto}>Remove Photo</MenuItem>
-                  </Menu>
-                </div>
-
-                <div className="userInfo">
-                  <div>
-                    <h3 className="heading-3">
-                      {loggedinuser[0]?.name
-                        ? loggedinuser[0].name
-                        : user && user.displayname}
-                    </h3>
-                    <p className="usernameSection">@{username}</p>
-                  </div>
-                  <Editprofile user={user} loggedinuser={loggedinuser} handleProfileClick={handleProfileClick} />
-                </div>
-                <div className="infoContainer">
-                  {loggedinuser[0]?.bio ? <p>{loggedinuser[0].bio}</p> : ""}
-                  <div className="locationAndLink">
-                    {loggedinuser[0]?.location ? (
-                      <p className="suvInfo">
-                        <MyLocationIcon /> {loggedinuser[0].location}
-                      </p>
-                    ) : (
-                      ""
-                    )}
-                    {loggedinuser[0]?.website ? (
-                      <p className="subInfo link">
-                        <AddLinkIcon /> {loggedinuser[0].website}
-                      </p>
-                    ) : (
-                      ""
-                    )}
-                  </div>
-                </div>
-                <h4 className="tweetsText">Tweets</h4>
-                <hr />
+                      style={{ display: "none" }}
+                    />
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      setAvatarModalOpen(true);
+                      handleMenuClose();
+                    }}
+                  >
+                    Select Avatar
+                  </MenuItem>
+                  <MenuItem onClick={handleRemovePhoto}>Remove Photo</MenuItem>
+                </Menu>
               </div>
-              {post.map((p) => (
-                <Post p={p} />
-              ))}
+
+              <div className="userInfo">
+                <div>
+                  <h3 className="heading-3">{loggedinuser?.name || ""}</h3>
+                  <p className="usernameSection">@{loggedinuser?.username || ""}</p>
+                </div>
+                <Editprofile loggedinuser={loggedinuser} setLoggedinuser={setLoggedinuser} handleProfileClick={handleProfileClick} />
+              </div>
+
+              {/* Bio, Location, Website */}
+              <div className="infoContainer">
+                <p className="bio">{loggedinuser.bio}</p>
+                <div className="locationAndLink">
+                  {loggedinuser.location && (
+                    <p className="subInfo">
+                      <MyLocationIcon /> {loggedinuser.location}
+                    </p>
+                  )}
+                  {loggedinuser.website && (
+                    <p className="subInfo link">
+                      <AddLinkIcon /> {loggedinuser.website}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+
+              <h4 className="tweetsText">Tweets</h4>
+              <hr />
             </div>
-          }
+
+            {/* Posts */}
+            {post.map((p) => (
+              <Post key={p._id} p={p} />
+            ))}
+          </div>
         </div>
       </div>
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Modal, IconButton, TextField } from "@mui/material";
+import { useUserAuth } from "../../../context/UserAuthContext";
 import CloseIcon from "@mui/icons-material/Close";
 import "./Editprofile.css";
 
@@ -54,28 +55,29 @@ function Editchild({ dob, setdob }) {
   );
 }
 
-const Editprofile = ({ user, loggedinuser,handleProfileClick }) => {
+const Editprofile = ({ loggedinuser, setLoggedinuser, handleProfileClick }) => {
   const [name, setname] = useState("");
   const [bio, setbio] = useState("");
   const [location, setlocation] = useState("");
   const [website, setwebsite] = useState("");
   const [open, setopen] = useState(false);
   const [dob, setdob] = useState("");
+  const { setUserDetails } = useUserAuth();
 
   // Prefill form when modal opens
   useEffect(() => {
-    if (open && loggedinuser[0]) {
-      setname(loggedinuser[0].name || "");
-      setbio(loggedinuser[0].bio || "");
-      setlocation(loggedinuser[0].location || "");
-      setwebsite(loggedinuser[0].website || "");
-      setdob(loggedinuser[0].dob || "");
+    if (open && loggedinuser) {
+      setname(loggedinuser.name || "");
+      setbio(loggedinuser.bio || "");
+      setlocation(loggedinuser.location || "");
+      setwebsite(loggedinuser.website || "");
+      setdob(loggedinuser.dob || "");
     }
   }, [open, loggedinuser]);
 
   const handlesave = () => {
     const editinfo = { name, bio, location, website, dob };
-    fetch(`http://localhost:5000/userupdate/${user?.email}`, {
+    fetch(`http://localhost:5000/userupdate/${loggedinuser?.email}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -84,8 +86,20 @@ const Editprofile = ({ user, loggedinuser,handleProfileClick }) => {
     })
       .then((res) => res.json())
       .then(() => {
-        alert("Profile updated successfully!");
-        setopen(false);
+        return fetch(`http://localhost:5000/user?email=${loggedinuser?.email}`);
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        const updatedUser = Array.isArray(data) ? data[0] : data;
+        if (updatedUser) {
+          alert("Profile updated successfully!");
+          setUserDetails(updatedUser);
+          setLoggedinuser(updatedUser);
+          setopen(false);
+        }
+      })
+      .catch((error) => {
+        console.error("Error updating user:", error);
       });
   };
 
@@ -94,7 +108,7 @@ const Editprofile = ({ user, loggedinuser,handleProfileClick }) => {
       <button onClick={() => setopen(true)} className="Edit-profile-btn">
         Edit profile
       </button>
-      
+
       <button className="Edit-profile-btn" onClick={handleProfileClick}>Edit Profile Photo</button>
 
       <Modal open={open} onClose={() => setopen(false)}>

@@ -8,11 +8,12 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import PublishIcon from "@mui/icons-material/Publish";
 
 const Posts = ({ p }) => {
-  const { name, username, photo, post, profilephoto } = p;
+  const { name, username, photo, post, profileImage } = p;
   return (
     <div className="post">
       <div className="post__avatar">
-        <Avatar src={profilephoto} />
+        {console.log(profileImage)}
+        <Avatar src={profileImage} />
       </div>
       <div className="post__body">
         <div className="post__header">

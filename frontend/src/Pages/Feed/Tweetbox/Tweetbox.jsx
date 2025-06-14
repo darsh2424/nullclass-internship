@@ -13,10 +13,10 @@ const Tweetbox = () => {
   const [username, setusername] = useState("");
   const { user } = useUserAuth();
   const [loggedinsuer] = useLoggedinuser();
-  const email = user?.email;
-  const userprofilepic = loggedinsuer[0]?.profileImage
-    ? loggedinsuer[0].profileImage
-    : user && user.photoURL;
+  const email = loggedinsuer?.email;
+  const userprofilepic = loggedinsuer?.profileImage
+    ? loggedinsuer.profileImage
+    : `https://ui-avatars.com/api/?name=${username}&background=random`;
 
   const handleuploadimage = (e) => {
     setisloading(true);
@@ -26,7 +26,7 @@ const Tweetbox = () => {
     formData.set("image", image);
     axios
       .post(
-        "https://api.imgbb.com/1/upload?key=b0ea2f6cc0f276633b2a8a86d2c43335",
+        "https://api.imgbb.com/1/upload?key=03b3c3cff81e3abde35b31e2220a26a0",
         formData
       )
       .then((res) => {
@@ -40,22 +40,22 @@ const Tweetbox = () => {
   };
   const handletweet = (e) => {
     e.preventDefault();
-    if (user?.providerData[0]?.providerId === "password") {
+    if (user?.providerData?.providerId === "password") {
       fetch(`http://localhost:5000/loggedinuser?email=${email}`)
         .then((res) => res.json())
         .then((data) => {
-          // console.log(data[0].name);
-          setname(data[0]?.name);
-          setusername(data[0]?.username);
+          // console.log(data.name);
+          setname(data?.name);
+          setusername(data?.username);
         });
     } else {
-      setname(user?.displayName);
+      setname(loggedinsuer?.name);
       setusername(email?.split("@")[0]);
     }
     // console.log(name);
     if (name) {
       const userpost = {
-        profilephoto: userprofilepic,
+        profileImage: userprofilepic,
         post: post,
         photo: imageurl,
         username: username,
@@ -84,9 +84,9 @@ const Tweetbox = () => {
         <div className="tweetBox__input">
           <Avatar
             src={
-              loggedinsuer[0]?.profileImage
-                ? loggedinsuer[0].profileImage
-                : user && user.photoURL
+              loggedinsuer?.profileImage
+                ? loggedinsuer.profileImage
+                : `https://ui-avatars.com/api/?name=${username}&background=random`
             }
           />
           <input

@@ -2,15 +2,20 @@ import React from "react";
 import "../pages.css";
 import Mainprofile from "./Mainprofile/Mainprofile";
 import { useUserAuth } from "../../context/UserAuthContext";
+import useLoggedinuser from "../../hooks/useLoggedinuser";
+
+
 const Profile = () => {
-  const { user } = useUserAuth();
+  // const { userDetails } = useUserAuth();
+  const [loggedinsuer] = useLoggedinuser();
+
   // const user = {
   //   displayname: "bithead",
   //   email: "bithead@gmail.com",
   // };
   return (
     <div className="profilePage">
-      <Mainprofile user={user} />
+      <Mainprofile user={loggedinsuer} />
     </div>
   );
 };

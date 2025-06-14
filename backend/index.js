@@ -58,13 +58,14 @@ async function run() {
     });
 
     app.patch("/userupdate/:email", async (req, res) => {
-      const filter = { email: req.params.email }; // ✅ Correct usage
+      const filter = { email: req.params.email }; 
       const profile = req.body;
       const options = { upsert: true };
       const updateDoc = { $set: profile };
 
       try {
         const result = await usercollection.updateOne(filter, updateDoc, options);
+        // console.log(result)
         res.send(result);
       } catch (error) {
         console.error("Error updating user:", error);
