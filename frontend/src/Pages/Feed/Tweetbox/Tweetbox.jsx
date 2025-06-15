@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Tweetbox.css";
 import { Avatar, Button } from "@mui/material";
 import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
@@ -6,14 +6,18 @@ import axios from "axios";
 import { useUserAuth } from "../../../context/UserAuthContext";
 import useLoggedinuser from "../../../hooks/useLoggedinuser";
 const Tweetbox = () => {
+  const { user } = useUserAuth();
+  const [loggedinsuer] = useLoggedinuser();
   const [post, setpost] = useState("");
   const [imageurl, setimageurl] = useState("");
   const [isloading, setisloading] = useState(false);
   const [name, setname] = useState("");
-  const [username, setusername] = useState("");
-  const { user } = useUserAuth();
-  const [loggedinsuer] = useLoggedinuser();
+  const [username, setusername] = useState(loggedinsuer?.email.split('@')[0]);
   const email = loggedinsuer?.email;
+
+  useEffect(() => {
+    setusername(email?.split('@')[0])
+  }, [email])
   const userprofilepic = loggedinsuer?.profileImage
     ? loggedinsuer.profileImage
     : `https://ui-avatars.com/api/?name=${username}&background=random`;

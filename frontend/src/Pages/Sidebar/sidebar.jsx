@@ -44,7 +44,7 @@ const Sidebar = ({ handlelogout, user }) => {
         <Sidebaroption Icon={SearchIcon} text="Explore" />
       </Customlink>
       <Customlink to="/home/notification">
-        <Sidebaroption Icon={NotificationsNoneIcon} text="Notifications" />
+        <Sidebaroption Icon={NotificationsNoneIcon} text="My Followings" />
       </Customlink>
       <Customlink to="/home/profile">
         <Sidebaroption Icon={PermIdentityIcon} text="Profile" />

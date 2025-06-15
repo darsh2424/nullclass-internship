@@ -19,32 +19,39 @@ const Signup = () => {
   const handlesubmit = async (e) => {
     e.preventDefault();
     seterror("");
+
     try {
-      await signUp(email, password);
+      const firebaseUser = await signUp(email, password);
+
       const user = {
         username: username,
         name: name,
         email: email,
+        password:password,
       };
-      fetch("http://localhost:5000/register", {
+
+      const res = await fetch("http://localhost:5000/register", {
         method: "POST",
         headers: {
           "content-type": "application/json",
         },
         body: JSON.stringify(user),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.acknowledged) {
-            console.log(data);
-            navigate("/");
-          }
-        });
+      });
+
+      const data = await res.json();
+
+      if (data.acknowledged) {
+        console.log(data);
+        navigate("/");
+      } else {
+        window.alert("Registration to MongoDB failed.");
+      }
     } catch (error) {
       seterror(error.message);
       window.alert(error.message);
     }
   };
+
   const hanglegooglesignin = async (e) => {
     e.preventDefault();
     try {

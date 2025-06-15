@@ -1,4 +1,4 @@
-import React, { useState,useContext } from "react";
+import React, { useState, useContext } from "react";
 import twitterimg from "../../image/twitter.jpeg";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import GoogleButton from "react-google-button";
@@ -10,18 +10,36 @@ const Login = () => {
   const [password, setpassword] = useState("");
   const [error, seterror] = useState("");
   const navigate = useNavigate();
-  const { googleSignIn ,logIn} = useUserAuth();
+  const { googleSignIn, logIn,setManualUser } = useUserAuth();
   const handlesubmit = async (e) => {
     e.preventDefault();
     seterror("");
+
     try {
-      await logIn(email,password)
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Login failed");
+      }
+
+      // console.log("Logged in user:", data.user);
+      setManualUser(data.user.email, data.user);
       navigate("/");
     } catch (error) {
+      console.error("Login failed:", error.message);
       seterror(error.message);
       window.alert(error.message);
     }
   };
+
   const hanglegooglesignin = async (e) => {
     e.preventDefault();
     try {
@@ -63,7 +81,7 @@ const Login = () => {
             </form>
             <hr />
             <div>
-              <GoogleButton className="g-btn" type="light" onClick={hanglegooglesignin}/>
+              <GoogleButton className="g-btn" type="light" onClick={hanglegooglesignin} />
             </div>
           </div>
           <div>
