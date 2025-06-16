@@ -303,7 +303,7 @@ const Mainprofile = () => {
 
             {/* Posts */}
             {post.map((p) => (
-              <Post key={p._id} p={p} />
+              <Post key={p._id} p={p}  />
             ))}
           </div>
         </div>

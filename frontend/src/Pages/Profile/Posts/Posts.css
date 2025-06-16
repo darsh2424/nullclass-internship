@@ -87,3 +87,12 @@
     font-size: 18px !important;
   }
 }
+.liked {
+  color: red !important;
+  transition: 0.2s;
+}
+
+.like-count {
+  font-size: 12px;
+  margin-left: 4px;
+}

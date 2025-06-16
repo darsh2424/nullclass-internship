@@ -1,18 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Posts.css";
 import { Avatar } from "@mui/material";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
-import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-import RepeatIcon from "@mui/icons-material/Repeat";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import PublishIcon from "@mui/icons-material/Publish";
 
-const Posts = ({ p }) => {
-  const { name, username, photo, post, profileImage } = p;
+const Posts = ({ p, currentUserId }) => {
+  const { name, username, photo, post: content, profileImage, _id, likes = [] } = p;
+
+  const [likeList, setLikeList] = useState(likes);
+  const likedByUser = likeList.includes(currentUserId);
+
+  const toggleLike = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/like", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: currentUserId, postId: _id }),
+      });
+
+      if (res.ok) {
+        setLikeList((prev) =>
+          likedByUser
+            ? prev.filter((id) => id !== currentUserId)
+            : [...prev, currentUserId]
+        );
+      }
+    } catch (err) {
+      console.error("Failed to toggle like", err);
+    }
+  };
+
   return (
     <div className="post">
       <div className="post__avatar">
-        {console.log(profileImage)}
         <Avatar src={profileImage} />
       </div>
       <div className="post__body">
@@ -26,19 +47,27 @@ const Posts = ({ p }) => {
             </h3>
           </div>
           <div className="post__headerDescription">
-            <p>{post}</p>
+            <p>{content}</p>
           </div>
         </div>
-        <img src={photo} alt="" width="500" />
-        {/* <div className="post__footer">
-          <ChatBubbleOutlineIcon
-            className="post__fotter__icon"
-            fontSize="small"
-          />
-          <RepeatIcon className="post__fotter__icon" fontSize="small" />
-          <FavoriteBorderIcon className="post__fotter__icon" fontSize="small" />
-          <PublishIcon className="post__fotter__icon" fontSize="small" />
-        </div> */}
+        {photo && <img src={photo} alt="" width="500" />}
+        <div className="post__footer">
+          {likedByUser ? (
+            <FavoriteIcon
+              className="post__fotter__icon liked"
+              fontSize="small"
+              style={{ color: "red" }}
+              onClick={toggleLike}
+            />
+          ) : (
+            <FavoriteBorderIcon
+              className="post__fotter__icon"
+              fontSize="small"
+              onClick={toggleLike}
+            />
+          )}
+          <span className="like-count">{likeList.length}</span>
+        </div>
       </div>
     </div>
   );

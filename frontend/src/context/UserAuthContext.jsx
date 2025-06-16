@@ -80,8 +80,14 @@ export function UserAuthContextProvider(props) {
                             website: null,
                             profileImage: currentuser.photoURL || null,
                             coverImage: null,
+                            dailyPostInfo: {
+                                date: new Date().toISOString().split('T')[0],
+                                count: 0,
+                            },
+                            lastPostAt: null,
+                            createdAt: new Date(),
                         };
-                        
+
                         const createRes = await fetch("http://localhost:5000/register", {
                             method: "POST",
                             headers: {
