@@ -116,19 +116,25 @@ async function run() {
     });
 
     app.post("/follow", async (req, res) => {
-      const { currentUserId, targetUserId } = req.body;
+      const { currentUsername, targetUsername } = req.body;
 
-      if (!currentUserId || !targetUserId) return res.status(400).send("Both user IDs are required");
+      if (!currentUsername || !targetUsername) return res.status(400).send("Both usernames are required");
 
       try {
+        const currentUser = await usercollection.findOne({ username: currentUsername });
+        const targetUser = await usercollection.findOne({ username: targetUsername });
+
+        if (!currentUser || !targetUser) return res.status(404).send("One or both users not found");
+
         await usercollection.updateOne(
-          { _id: new ObjectId(currentUserId) },
-          { $addToSet: { followings: targetUserId } }
+          { _id: currentUser._id },
+          { $addToSet: { followings: targetUser._id } }
         );
         await usercollection.updateOne(
-          { _id: new ObjectId(targetUserId) },
-          { $addToSet: { followers: currentUserId } }
+          { _id: targetUser._id },
+          { $addToSet: { followers: currentUser._id } }
         );
+
         res.send({ message: "Followed successfully" });
       } catch (err) {
         console.error(err);
@@ -137,18 +143,23 @@ async function run() {
     });
 
     app.post("/unfollow", async (req, res) => {
-      const { currentUserId, targetUserId } = req.body;
+      const { currentUsername, targetUsername } = req.body;
 
-      if (!currentUserId || !targetUserId) return res.status(400).send("Both user IDs are required");
+      if (!currentUsername || !targetUsername) return res.status(400).send("Both usernames are required");
 
       try {
+        const currentUser = await usercollection.findOne({ username: currentUsername });
+        const targetUser = await usercollection.findOne({ username: targetUsername });
+
+        if (!currentUser || !targetUser) return res.status(404).send("One or both users not found");
+
         await usercollection.updateOne(
-          { _id: new ObjectId(currentUserId) },
-          { $pull: { followings: targetUserId } }
+          { _id: new ObjectId(currentUser._id) },
+          { $pull: { followings: targetUser._id } }
         );
         await usercollection.updateOne(
-          { _id: new ObjectId(targetUserId) },
-          { $pull: { followers: currentUserId } }
+          { _id: new ObjectId(targetUser._id) },
+          { $pull: { followers: currentUser._id } }
         );
         res.send({ message: "Unfollowed successfully" });
       } catch (err) {
@@ -234,7 +245,8 @@ async function run() {
 
     app.post("/post", async (req, res) => {
       const { profileImage, post, photo, username, name, email, userId } = req.body;
-      if (!userId || !content) return res.status(400).send("User ID and content required");
+
+      if (!userId || !email || !name || !username || !post || !profileImage) return res.status(400).send("User ID and content required");
 
       try {
         const user = await usercollection.findOne({ _id: new ObjectId(userId) });
@@ -341,6 +353,53 @@ async function run() {
       }
     });
 
+    app.get("/popular-users", async (req, res) => {
+      try {
+        const users = await usercollection.aggregate([
+          {
+            $addFields: {
+              followerCount: { $size: { $ifNull: ["$followers", []] } }
+            }
+          },
+          { $sort: { followerCount: -1 } },
+          { $limit: 10 },
+          {
+            $project: {
+              name: 1,
+              username: 1,
+              profileImage: 1,
+              followerCount: 1
+            }
+          }
+        ]).toArray();
+
+        res.send(users);
+      } catch (err) {
+        console.error("Popular user fetch error:", err);
+        res.status(500).send("Internal server error");
+      }
+    });
+
+    app.get("/search-users", async (req, res) => {
+      const query = req.query.q;
+      if (!query) return res.status(400).send("Query is required");
+
+      try {
+        const regex = new RegExp(query, "i");
+        const users = await usercollection.find({
+          $or: [
+            { name: { $regex: regex } },
+            { username: { $regex: regex } }
+          ]
+        }).project({ name: 1, username: 1, profileImage: 1 }).limit(20).toArray();
+
+        res.send(users);
+      } catch (err) {
+        console.error("Search error:", err);
+        res.status(500).send("Internal server error");
+      }
+    });
+
 
     app.get("/post", async (req, res) => {
       const post = (await postcollection.find().toArray()).reverse();
@@ -352,7 +411,7 @@ async function run() {
       const user = await usercollection.findOne({ email });
       if (!user) return res.status(404).send("User not found");
 
-      const post = (await postcollection.find({ userId: user._id.toString() }).toArray()).reverse();
+      const post = (await postcollection.find({ email: email }).toArray()).reverse();
       res.send(post);
     });
 

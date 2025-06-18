@@ -20,7 +20,7 @@ const Feed = () => {
       </div>
       <Tweetbox />
       {posts.map((p) => (
-        <Posts key={p._id} p={p} currentUserId={loggedinsuer?._id} />
+        <Posts key={p._id} p={p} currentUserId={loggedinsuer?._id} loggedInUsername={loggedinsuer?.username} />
       ))}
     </div>
   );

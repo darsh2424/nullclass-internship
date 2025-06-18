@@ -28,9 +28,11 @@ const Mainprofile = () => {
 
   useEffect(() => {
     if (email) {
+      console.log(email)
       fetch(`http://localhost:5000/userpost?email=${email}`)
         .then((res) => res.json())
         .then((data) => {
+          console.log("User posts received:", data);
           setpost(data);
         });
     }
@@ -43,7 +45,7 @@ const Mainprofile = () => {
     formData.set("image", image);
     axios
       .post(
-        "https://api.imgbb.com/1/upload?key=b0ea2f6cc0f276633b2a8a86d2c43335",
+        "https://api.imgbb.com/1/upload?key=03b3c3cff81e3abde35b31e2220a26a0",
         formData
       )
       .then((res) => {
@@ -90,7 +92,7 @@ const Mainprofile = () => {
     formData.set("image", image);
     axios
       .post(
-        "https://api.imgbb.com/1/upload?key=b0ea2f6cc0f276633b2a8a86d2c43335",
+        "https://api.imgbb.com/1/upload?key=03b3c3cff81e3abde35b31e2220a26a0",
         formData
       )
       .then((res) => {
@@ -303,7 +305,7 @@ const Mainprofile = () => {
 
             {/* Posts */}
             {post.map((p) => (
-              <Post key={p._id} p={p}  />
+              <Post key={p._id} p={p} currentUserId={loggedinuser?._id} loggedInUsername={loggedinuser?.username}  />
             ))}
           </div>
         </div>

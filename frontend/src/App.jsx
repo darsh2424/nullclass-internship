@@ -14,6 +14,7 @@ import Profile from "./Pages/Profile/Profile";
 import More from "./Pages/more/More";
 import { UserAuthContextProvider } from "./context/UserAuthContext";
 import Bookmark from "./Pages/Bookmark/Bookmark";
+import UserProfile from "./Pages/UserProfile/UserProfile";
 function App() {
   return (
     <div className="app">
@@ -41,16 +42,17 @@ function App() {
           />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/home" element={<Home />}>
-            <Route path="feed" element={<Feed />} />
-            <Route path="explore" element={<Explore />} />
-            <Route path="notification" element={<Notification />} />
-            <Route path="messages" element={<Message />} />
-            <Route path="lists" element={<Lists />} />
-            <Route path="bookmarks" element={<Bookmark />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="more" element={<More />} />
+          <Route path="/home" element={<Home />} >
+          <Route path="feed" element={<Feed />} />
+          <Route path="explore" element={<Explore />} />
+          <Route path="notification" element={<Notification />} />
+          <Route path="messages" element={<Message />} />
+          <Route path="lists" element={<Lists />} />
+          <Route path="bookmarks" element={<Bookmark />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="more" element={<More />} />
           </Route>
+          <Route path="/home/user/:username" element={<UserProfile />} />
         </Routes>
       </UserAuthContextProvider>
     </div>

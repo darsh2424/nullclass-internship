@@ -42,7 +42,7 @@
 .tweetBox__tweetButton {
   background-color: var(--twitter-color);
   border: none;
-  color: white;
+  color: black !important;
   font-weight: 700;
   text-transform: inherit;
   border-radius: 50px;

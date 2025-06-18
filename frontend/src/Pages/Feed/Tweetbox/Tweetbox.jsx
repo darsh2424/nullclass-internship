@@ -14,7 +14,7 @@ const Tweetbox = () => {
   const [isloading, setisloading] = useState(false);
   const [name, setname] = useState("");
   const [username, setusername] = useState(loggedinsuer?.email.split("@")[0]);
-  const [canPost, setCanPost] = useState(false);
+  const [canPost, setCanPost] = useState(true);
   const [denyReason, setDenyReason] = useState("");
   const email = loggedinsuer?.email;
 
@@ -33,7 +33,7 @@ const Tweetbox = () => {
       try {
         const res = await fetch(`http://localhost:5000/can-post?userId=${loggedinsuer._id}`);
         const data = await res.json();
-        setCanPost(data.canPost);
+        // setCanPost(data.canPost);
         setDenyReason(data.reason);
       } catch (err) {
         console.error("Permission check error:", err);
@@ -63,47 +63,73 @@ const Tweetbox = () => {
       });
   };
 
-  const handletweet = (e) => {
+  const handletweet = async (e) => {
     e.preventDefault();
     if (!canPost) return;
 
-    if (user?.providerData?.providerId === "password") {
-      fetch(`http://localhost:5000/loggedinuser?email=${email}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setname(data?.name);
-          setusername(data?.username);
-        });
-    } else {
-      setname(loggedinsuer?.name);
-      setusername(email?.split("@")[0]);
-    }
+    try {
+      let finalName = "";
+      let finalUsername = "";
 
-    if (name) {
+      if (user?.providerData?.[0]?.providerId === "password") {
+        
+        const res = await fetch(`http://localhost:5000/loggedinuser?email=${email}`);
+        const data = await res.json();
+
+        finalName = data?.name;
+        finalUsername = data?.username;
+
+        if (!finalName || !finalUsername) {
+          alert("Could not fetch user details");
+          return;
+        }
+      } else {
+        finalName = loggedinsuer?.name || "";
+        finalUsername = email?.split("@")[0] || "";
+      }
+
+      // Validate essentials before posting
+      if (!finalName || !finalUsername || !loggedinsuer?._id || !post.trim()) {
+        alert("Missing post content or user information.");
+        return;
+      }
+
+      // Compose the post
       const userpost = {
         profileImage: userprofilepic,
         post: post,
         photo: imageurl,
-        username: username,
-        name: name,
+        username: finalUsername,
+        name: finalName,
         email: email,
         userId: loggedinsuer._id,
       };
 
+      // Clear input state
       setpost("");
       setimageurl("");
 
-      fetch("http://localhost:5000/post", {
+      // Send to backend
+      const postRes = await fetch("http://localhost:5000/post", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userpost),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-        });
+      });
+
+      const result = await postRes.json().catch(() => null);
+
+      if (!postRes.ok) {
+        console.error("Post failed:", result?.error || "Unknown error");
+        alert(result?.error || "Failed to post.");
+      } else {
+        console.log("Post created:", result.message);
+      }
+    } catch (err) {
+      console.error("Tweet error:", err);
+      alert("Something went wrong while posting.");
     }
   };
+
 
   return (
     <div className="tweetBox">

@@ -1,0 +1,25 @@
+
+.MuiBox-root {
+  background-color: white;
+  border-radius: 12px;
+  max-width: 90%;
+  width: 100%;
+}
+
+.userCardBox:hover {
+  background-color: #f0f0f0;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.MuiTextField-root input {
+  background-color: #f9f9f9;
+}
+
+.MuiButton-contained {
+  background-color: #1d9bf0;
+  text-transform: none;
+}
+
+.MuiButton-contained:hover {
+  background-color: #0b86db;
+}
