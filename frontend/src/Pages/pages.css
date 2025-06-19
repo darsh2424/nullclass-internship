@@ -24,7 +24,7 @@
 
 .profilePage {
   flex: 0.6;
-  min-width: fit-content;
+  width: fit-content;
   overflow-y: auto;
   border-right: 1px solid var(--twitter-background);
 }

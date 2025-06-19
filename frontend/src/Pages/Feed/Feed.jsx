@@ -5,21 +5,25 @@ import Tweetbox from "./Tweetbox/Tweetbox";
 import useLoggedinuser from "../../hooks/useLoggedinuser";
 const Feed = () => {
   const [posts, setPosts] = useState([]);
-  const [loggedinsuer]=useLoggedinuser();
+  const [loggedinsuer] = useLoggedinuser();
 
   useEffect(() => {
-     fetch("http://localhost:5000/post")
-        .then((res) => res.json())
-        .then((data) => setPosts(data));
+    fetch("http://localhost:5000/post")
+      .then((res) => res.json())
+      .then((data) => setPosts(data));
   }, []);
+
+  const handleNewPost = (newPost) => {
+    setPosts((prevPosts) => [newPost, ...prevPosts]); 
+  };
 
   return (
     <div className="feed">
       <div className="feed__header">
         <h2>Home</h2>
       </div>
-      <Tweetbox />
-      {posts.map((p) => (
+      <Tweetbox onNewPost={handleNewPost} />
+      {loggedinsuer && posts.map((p) => (
         <Posts key={p._id} p={p} currentUserId={loggedinsuer?._id} loggedInUsername={loggedinsuer?.username} />
       ))}
     </div>

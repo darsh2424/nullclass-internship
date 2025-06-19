@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Posts.css";
 import { Avatar } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";

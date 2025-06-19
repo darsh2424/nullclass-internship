@@ -6,7 +6,7 @@ import axios from "axios";
 import { useUserAuth } from "../../../context/UserAuthContext";
 import useLoggedinuser from "../../../hooks/useLoggedinuser";
 
-const Tweetbox = () => {
+const Tweetbox = ({ onNewPost }) => {
   const { user } = useUserAuth();
   const [loggedinsuer] = useLoggedinuser();
   const [post, setpost] = useState("");
@@ -26,7 +26,7 @@ const Tweetbox = () => {
     ? loggedinsuer.profileImage
     : `https://ui-avatars.com/api/?name=${username}&background=random`;
 
-  // 🧠 Check post permission on load
+
   useEffect(() => {
     const fetchCanPost = async () => {
       if (!loggedinsuer?._id) return;
@@ -72,7 +72,7 @@ const Tweetbox = () => {
       let finalUsername = "";
 
       if (user?.providerData?.[0]?.providerId === "password") {
-        
+
         const res = await fetch(`http://localhost:5000/loggedinuser?email=${email}`);
         const data = await res.json();
 
@@ -123,6 +123,9 @@ const Tweetbox = () => {
         alert(result?.error || "Failed to post.");
       } else {
         console.log("Post created:", result.message);
+        if (onNewPost && typeof onNewPost === "function") {
+          onNewPost(result.post);
+        }
       }
     } catch (err) {
       console.error("Tweet error:", err);

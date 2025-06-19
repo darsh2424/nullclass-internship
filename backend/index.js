@@ -294,6 +294,9 @@ async function run() {
         };
         await postcollection.insertOne(newPost);
 
+        const result = await postcollection.insertOne(newPost);
+        newPost._id = result.insertedId;
+
         await usercollection.updateOne(
           { _id: new ObjectId(userId) },
           {
@@ -304,7 +307,7 @@ async function run() {
           }
         );
 
-        res.send({ message: "Post created successfully" });
+        res.send({ message: "Post created successfully", post: newPost });
       } catch (err) {
         console.error("Post error:", err);
         res.status(500).send({ error: "Post failed" });
@@ -403,7 +406,17 @@ async function run() {
 
     app.get("/post", async (req, res) => {
       const post = (await postcollection.find().toArray()).reverse();
-      res.send(post);
+      const enrichedPosts = await Promise.all(
+        post.map(async (post) => {
+          const user = await usercollection.findOne({ username: post.username });
+          return {
+            ...post,
+            followers: user?.followers || [],
+          };
+        })
+      );
+
+      res.send(enrichedPosts);
     });
 
     app.get("/userpost", async (req, res) => {
@@ -412,8 +425,20 @@ async function run() {
       if (!user) return res.status(404).send("User not found");
 
       const post = (await postcollection.find({ email: email }).toArray()).reverse();
-      res.send(post);
+
+      const enrichedPosts = await Promise.all(
+        post.map(async (post) => {
+          const user = await usercollection.findOne({ username: post.username });
+          return {
+            ...post,
+            followers: user?.followers || [],
+          };
+        })
+      );
+
+      res.send(enrichedPosts);
     });
+
 
     app.get("/user", async (req, res) => {
       const user = await usercollection.find().toArray();

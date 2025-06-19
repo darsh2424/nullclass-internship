@@ -99,7 +99,7 @@ const Explore = () => {
           </Box>
         </Box>
         {
-          (user.username === loggedinuser?.username)
+          (user.username !== loggedinuser?.username)
             ? <Button
               variant={isFollowing ? "outlined" : "contained"}
               size="small"

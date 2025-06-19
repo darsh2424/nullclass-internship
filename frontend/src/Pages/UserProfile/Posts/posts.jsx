@@ -1,18 +1,16 @@
 import React, { useState } from "react";
 import "./Posts.css";
-import { Avatar } from "@mui/material";
+import { Avatar, Button } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt"; 
-import PersonRemoveIcon from "@mui/icons-material/PersonRemove"; 
 
-const Posts = ({ p, currentUserId, loggedInUsername, handleFollow }) => {
+const Posts = ({ p, currentUserId, loggedinUser, handleFollow }) => {
   const { name, username, photo, post: content, profileImage, _id, likes = [], followers = [] } = p;
 
   const [likeList, setLikeList] = useState(likes);
-  const likedByUser = likeList.includes(currentUserId);
-  const isOwnPost = username === loggedInUsername;
-  const [isFollowing, setIsFollowing] = useState(followers.includes(currentUserId));
+  const likedByUser = likeList.includes(loggedinUser._id);
+  const isOwnPost = username === loggedinUser.username;
+  const [isFollowing, setIsFollowing] = useState(followers.includes(loggedinUser._id));
 
   const toggleLike = async () => {
     try {
@@ -32,16 +30,23 @@ const Posts = ({ p, currentUserId, loggedInUsername, handleFollow }) => {
     }
   };
 
-  const toggleFollow = async () => {
+  const toggleFollow = async (username, isFollowing) => {
+    const endpoint = isFollowing ? "/unfollow" : "/follow";
     try {
-      const res = await fetch("http://localhost:5000/follow", {
+      const res = await fetch(`http://localhost:5000${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ currentUserId: currentUserId, targetUserId: username }),
+        body: JSON.stringify({
+          currentUsername: loggedinUser.username,
+          targetUsername: username,
+        }),
       });
 
       if (res.ok) {
-        setIsFollowing((prev) => !prev);
+        setFollowStatus((prev) => ({
+          ...prev,
+          [username]: !isFollowing,
+        }));
       }
     } catch (err) {
       console.error("Follow toggle failed", err);
@@ -61,15 +66,18 @@ const Posts = ({ p, currentUserId, loggedInUsername, handleFollow }) => {
               <span className="post__headerSpecial">
                 @{username}
                 {!isOwnPost && (
-                  <span onClick={toggleFollow} className="follow-icon">
-                    {isFollowing ? (
-                      <PersonRemoveIcon fontSize="small" titleAccess="Unfollow" />
-                    ) : (
-                      <PersonAddAltIcon fontSize="small" titleAccess="Follow" />
-                    )}
-                    Follow
-                  </span>
+                  <Button
+                    variant={isFollowing ? "outlined" : "contained"}
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFollow();
+                    }}
+                  >
+                    {isFollowing ? "Unfollow" : "Follow"}
+                  </Button>
                 )}
+
               </span>
             </h3>
           </div>

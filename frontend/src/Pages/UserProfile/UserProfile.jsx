@@ -19,17 +19,20 @@ const UserProfile = () => {
     useEffect(() => {
         fetch(`http://localhost:5000/user/${username}`)
             .then((res) => res.json())
-            .then((data) => setProfileUser(data));
+            .then((data) => {
+                setProfileUser(data)
+                // console.log(data)
+            });
     }, [username]);
     useEffect(() => {
         if (!profileUser?.email) return;
         fetch(`http://localhost:5000/userpost?email=${profileUser.email}`)
             .then((res) => res.json())
             .then((data) => {
-                console.log("User posts received:", data);
-                setPosts(data);
+                setPosts(data)
+                // console.log(data)
             });
-    },[profileUser]);
+    }, [profileUser?.email]);
 
     if (!profileUser) return <p>Loading...</p>;
 
@@ -97,12 +100,12 @@ const UserProfile = () => {
                         </div>
 
                         {/* Posts Section */}
-                        {posts.map((p) => (
+                        {loggedinuser && posts.map((p) => (
                             <Post
                                 key={p._id}
                                 p={p}
                                 currentUserId={profileUser._id}
-                                loggedInUsername={loggedinuser?.username}
+                                loggedinUser={loggedinuser}
                             />
                         ))}
                     </div>
