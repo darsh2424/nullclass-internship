@@ -4,13 +4,14 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import GoogleButton from "react-google-button";
 import { useNavigate, Link } from "react-router-dom";
 import "./login.css";
+import logInfo from "./logInfo";
 import { useUserAuth } from "../../context/UserAuthContext";
 const Login = () => {
   const [email, seteamil] = useState("");
   const [password, setpassword] = useState("");
   const [error, seterror] = useState("");
   const navigate = useNavigate();
-  const { googleSignIn, logIn,setManualUser } = useUserAuth();
+  const { googleSignIn, logIn, setManualUser } = useUserAuth();
   const handlesubmit = async (e) => {
     e.preventDefault();
     seterror("");
@@ -32,7 +33,24 @@ const Login = () => {
 
       // console.log("Logged in user:", data.user);
       setManualUser(data.user.email, data.user);
-      navigate("/");
+      const loginDetails = await logInfo(data.user);
+
+      fetch("http://localhost:5000/logInfo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: data.user.email,
+          ...loginDetails,
+        }),
+      })
+
+      const logData = await logRes.json();
+
+      if (logData.otpRequired) {
+        navigate("/otp");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
       console.error("Login failed:", error.message);
       seterror(error.message);

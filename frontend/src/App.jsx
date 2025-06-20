@@ -15,6 +15,7 @@ import More from "./Pages/more/More";
 import { UserAuthContextProvider } from "./context/UserAuthContext";
 import Bookmark from "./Pages/Bookmark/Bookmark";
 import UserProfile from "./Pages/UserProfile/UserProfile";
+import OtpVerification from "./Pages/Login/otpVerification";
 function App() {
   return (
     <div className="app">
@@ -41,6 +42,7 @@ function App() {
             }
           />
           <Route path="/login" element={<Login />} />
+          <Route path="/otp" element={<OtpVerification />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/home" element={<Home />} >
           <Route path="feed" element={<Feed />} />

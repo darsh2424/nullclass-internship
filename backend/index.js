@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
+const { sendOTPEmail } = require('./utils/sendOTPEmail');
 const uri = "mongodb+srv://iamdarsh2424:QcUbXjAj6lBMOUgc@twitter-clone.zdbvwbl.mongodb.net/?retryWrites=true&w=majority&appName=twitter-clone";
 const port = 5000;
 
@@ -25,6 +26,9 @@ async function run() {
     const db = client.db("twitter-clone-database");
     const postcollection = db.collection("posts");
     const usercollection = db.collection("users");
+    const loginlogs = db.collection("loginLogs");
+    const otpcollection = db.collection("otps");
+
 
     // Your routes here...
 
@@ -100,6 +104,75 @@ async function run() {
         console.error("Login error:", err);
         res.status(500).send({ error: "Internal server error" });
       }
+    });
+    app.post("/logInfo", async (req, res) => {
+      const { email, browser, os, device, ip } = req.body;
+
+      const currentHour = new Date().getHours();
+
+      // 1. Block mobile users except 10 AM to 1 PM
+      if (device === "mobile" && (currentHour < 10 || currentHour >= 13)) {
+        return res.status(403).send("Mobile access allowed only from 10 AM to 1 PM");
+      }
+
+      // 2. If Microsoft browser → allow directly
+      if (browser?.toLowerCase().includes("edge")) {
+        await saveLoginToDB();
+        return res.send({ message: "Logged in successfully - Edge browser" });
+      }
+
+      // 3. If Chrome → send OTP
+      if (browser?.toLowerCase().includes("chrome")) {
+        const otp = Math.floor(100000 + Math.random() * 900000);
+        await otpcollection.insertOne({ email, otp, createdAt: new Date() });
+
+        // send OTP by email logic here
+        await sendOTPEmail(email, otp);
+
+        return res.send({ otpRequired: true, message: "OTP sent to email" });
+      }
+
+      await saveLoginToDB();
+      return res.send({ message: "Logged in successfully" });
+
+      async function saveLoginToDB() {
+        await loginlogs.insertOne({
+          email,
+          browser,
+          os,
+          device,
+          ip,
+          time: new Date(),
+        });
+        console.log("LOGS SAVED...")
+      }
+    });
+    app.post("/verify-otp", async (req, res) => {
+      const { email, otp } = req.body;
+
+      const record = await otpcollection.findOne({ email, otp });
+      if (!record) return res.status(401).send("Invalid OTP");
+
+      await loginlogs.insertOne({
+        email,
+        time: new Date(),
+        browser: "Chrome",
+        verifiedViaOTP: true,
+      });
+
+      await otpcollection.deleteMany({ email });
+      res.send({ message: "OTP verified. Logged in successfully." });
+    });
+
+    app.get("/login-history", async (req, res) => {
+      const { email } = req.query;
+      const logs = await loginlogs
+        .find({ email })
+        .sort({ time: -1 })
+        .limit(10)
+        .toArray();
+
+      res.send(logs);
     });
 
     app.get("/loggedinuser", async (req, res) => {
