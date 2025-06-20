@@ -355,6 +355,26 @@ async function run() {
         res.status(500).send("Internal server error");
       }
     });
+    app.get("/userWithId/:id", async (req, res) => {
+      const userID = req.params.id;
+      if (!ObjectId.isValid(userID)) {
+        return res.status(400).json({ error: "Invalid user ID format" });
+      }
+
+      try {
+        const user = await usercollection.findOne({ _id: new ObjectId(userID) });
+
+        if (!user) {
+          return res.status(404).json({ error: "User not found" });
+        }
+
+        const { password, ...safeData } = user;
+        res.json(safeData);
+      } catch (err) {
+        console.error("Profile fetch error:", err);
+        res.status(500).json({ error: "Internal server error" });
+      }
+    });
 
     app.get("/popular-users", async (req, res) => {
       try {
