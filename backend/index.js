@@ -12,7 +12,7 @@ const app = express();
 app.use(cors({
    origin: [
     "http://localhost:5173",
-    "https://6856c04c33cfb9293d3340d5--twitterclone-darsh.netlify.app",
+    "https://6856c551bf93d950f9d904a9--twitterclone-darsh.netlify.app",
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   allowedHeaders: ["Content-Type"],
