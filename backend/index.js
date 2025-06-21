@@ -10,7 +10,10 @@ const port = 5000;
 
 const app = express();
 app.use(cors({
-  origin: "http://localhost:5173",
+   origin: [
+    "http://localhost:5173",
+    "https://6856abc044dae37049f53c82--twitterclone-darsh.netlify.app"
+  ],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   allowedHeaders: ["Content-Type"],
 }));
