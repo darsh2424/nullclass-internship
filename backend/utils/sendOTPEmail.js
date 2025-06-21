@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-
+require("dotenv").config();
 /**
  * Send OTP email using nodemailer
  * @param {string} email - Recipient email address
@@ -9,13 +9,13 @@ const sendOTPEmail = async (email, otp) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "darshback24@gmail.com",
-      pass: "cdhccwuxwtttcdha", 
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS, 
     },
   });
 
   const mailOptions = {
-    from: '"Twitter Clone By Darsh - Support" <darshback24@gmail.com>',
+    from: `"Twitter Clone By Darsh - Support" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: "Your OTP Code",
     html: `<p>Hello,</p><p>Your OTP is: <b>${otp}</b></p>`,

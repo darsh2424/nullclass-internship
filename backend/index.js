@@ -1,10 +1,11 @@
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const { sendOTPEmail } = require('./utils/sendOTPEmail');
-const uri = "mongodb+srv://iamdarsh2424:QcUbXjAj6lBMOUgc@twitter-clone.zdbvwbl.mongodb.net/?retryWrites=true&w=majority&appName=twitter-clone";
+const uri = process.env.MONGODB_URI;
 const port = 5000;
 
 const app = express();

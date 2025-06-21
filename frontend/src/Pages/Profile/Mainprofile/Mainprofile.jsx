@@ -45,7 +45,7 @@ const Mainprofile = () => {
     formData.set("image", image);
     axios
       .post(
-        "https://api.imgbb.com/1/upload?key=03b3c3cff81e3abde35b31e2220a26a0",
+        process.env.REACT_APP_IMGBB_API_KEY,
         formData
       )
       .then((res) => {
@@ -92,7 +92,7 @@ const Mainprofile = () => {
     formData.set("image", image);
     axios
       .post(
-        "https://api.imgbb.com/1/upload?key=03b3c3cff81e3abde35b31e2220a26a0",
+        process.env.REACT_APP_IMGBB_API_KEY,
         formData
       )
       .then((res) => {
