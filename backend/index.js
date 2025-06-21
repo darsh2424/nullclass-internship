@@ -10,7 +10,7 @@ const port = 5000;
 
 const app = express();
 app.use(cors({
-   origin: [
+  origin: [
     "http://localhost:5173",
     "https://6856c93eabe1d42cc03dc61c--twitterclone-darsh.netlify.app",
     "https://twitterclone-darsh.netlify.app",
@@ -118,12 +118,12 @@ async function run() {
 
       // 1. Block mobile users except 10 AM to 1 PM
       if (device === "mobile" && (currentHour < 10 || currentHour >= 13)) {
-        return res.status(403).send("Mobile access allowed only from 10 AM to 1 PM");
+        return res.status(403).send({ device: "mobile", message: "Mobile access allowed only from 10 AM to 1 PM" });
       }
 
       // 2. If Microsoft browser → allow directly
       if (browser?.toLowerCase().includes("edge")) {
-        await saveLoginToDB(email,browser,os,device,ip);
+        await saveLoginToDB(email, browser, os, device, ip);
         return res.send({ message: "Logged in successfully - Edge browser" });
       }
 
@@ -137,10 +137,10 @@ async function run() {
         return res.send({ otpRequired: true, message: "OTP sent to email" });
       }
 
-      await saveLoginToDB(email,browser,os,device,ip);
+      await saveLoginToDB(email, browser, os, device, ip);
       return res.send({ message: "Logged in successfully" });
     });
-    async function saveLoginToDB(email,browser,os,device,ip) {
+    async function saveLoginToDB(email, browser, os, device, ip) {
       await loginlogs.insertOne({
         email,
         browser,
@@ -155,7 +155,7 @@ async function run() {
       const record = await otpcollection.findOne({ email, otp: parseInt(otp), createdAt: { $gte: new Date(Date.now() - 5 * 60 * 1000) }, });
       if (!record) return res.status(401).json({ error: "Invalid OTP" });
 
-      await saveLoginToDB(email,browser,os,device,ip);
+      await saveLoginToDB(email, browser, os, device, ip);
       await otpcollection.deleteMany({ email });
       res.json({ message: "OTP verified. Logged in successfully." });
     });
