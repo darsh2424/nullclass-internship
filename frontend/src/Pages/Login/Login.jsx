@@ -6,8 +6,10 @@ import { useNavigate, Link } from "react-router-dom";
 import "./login.css";
 import logInfo from "./logInfo";
 import { useUserAuth } from "../../context/UserAuthContext";
+import { CircularProgress } from "@mui/material";
 const Login = () => {
   const [email, seteamil] = useState("");
+  const [loading, setLoading] = useState(null);
   const [password, setpassword] = useState("");
   const [error, seterror] = useState("");
   const navigate = useNavigate();
@@ -15,7 +17,7 @@ const Login = () => {
   const handlesubmit = async (e) => {
     e.preventDefault();
     seterror("");
-
+    setLoading(true);
     try {
       const response = await fetch("http://localhost:5000/login", {
         method: "POST",
@@ -35,23 +37,24 @@ const Login = () => {
       setManualUser(data.user.email, data.user);
       const loginDetails = await logInfo(data.user);
 
-      fetch("http://localhost:5000/logInfo", {
+      const logRes = await fetch("http://localhost:5000/logInfo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: data.user.email,
           ...loginDetails,
         }),
-      })
+      });
 
       const logData = await logRes.json();
-
+      setLoading(false);
       if (logData.otpRequired) {
         navigate("/otp");
       } else {
         navigate("/");
       }
     } catch (error) {
+      setLoading(false);
       console.error("Login failed:", error.message);
       seterror(error.message);
       window.alert(error.message);
@@ -59,6 +62,7 @@ const Login = () => {
   };
 
   const hanglegooglesignin = async (e) => {
+    if(loading) return
     e.preventDefault();
     try {
       await googleSignIn();
@@ -92,9 +96,19 @@ const Login = () => {
                 onChange={(e) => setpassword(e.target.value)}
               />
               <div className="btn-login">
-                <button type="submit" className="btn">
-                  Log In
-                </button>
+                {loading ?
+                  (
+                    <button type="submit" className="btn">
+                      <CircularProgress />
+                    </button>
+                  )
+                  :
+                  (
+                    <button type="submit" className="btn">
+                      Log In
+                    </button>
+                  )
+                }
               </div>
             </form>
             <hr />

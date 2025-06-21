@@ -40,7 +40,7 @@ const Mainprofile = () => {
 
   const handleuploadcoverimage = (e) => {
     setisloading(true);
-    const image = e.target.files;
+    const image = e.target.files[0];
     const formData = new FormData();
     formData.set("image", image);
     axios
@@ -87,7 +87,7 @@ const Mainprofile = () => {
 
   const handleuploadprofileimage = (e) => {
     setisloading(true);
-    const image = e.target.files;
+    const image = e.target.files[0];
     const formData = new FormData();
     formData.set("image", image);
     axios

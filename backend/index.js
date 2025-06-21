@@ -117,7 +117,7 @@ async function run() {
 
       // 2. If Microsoft browser → allow directly
       if (browser?.toLowerCase().includes("edge")) {
-        await saveLoginToDB();
+        await saveLoginToDB(email,browser,os,device,ip);
         return res.send({ message: "Logged in successfully - Edge browser" });
       }
 
@@ -128,40 +128,30 @@ async function run() {
 
         // send OTP by email logic here
         await sendOTPEmail(email, otp);
-
         return res.send({ otpRequired: true, message: "OTP sent to email" });
       }
 
-      await saveLoginToDB();
+      await saveLoginToDB(email,browser,os,device,ip);
       return res.send({ message: "Logged in successfully" });
-
-      async function saveLoginToDB() {
-        await loginlogs.insertOne({
-          email,
-          browser,
-          os,
-          device,
-          ip,
-          time: new Date(),
-        });
-        console.log("LOGS SAVED...")
-      }
     });
-    app.post("/verify-otp", async (req, res) => {
-      const { email, otp } = req.body;
-
-      const record = await otpcollection.findOne({ email, otp });
-      if (!record) return res.status(401).send("Invalid OTP");
-
+    async function saveLoginToDB(email,browser,os,device,ip) {
       await loginlogs.insertOne({
         email,
+        browser,
+        os,
+        device,
+        ip,
         time: new Date(),
-        browser: "Chrome",
-        verifiedViaOTP: true,
       });
+    }
+    app.post("/verify-otp", async (req, res) => {
+      const { email, otp, browser, os, device, ip } = req.body;
+      const record = await otpcollection.findOne({ email, otp: parseInt(otp), createdAt: { $gte: new Date(Date.now() - 5 * 60 * 1000) }, });
+      if (!record) return res.status(401).json({ error: "Invalid OTP" });
 
+      await saveLoginToDB(email,browser,os,device,ip);
       await otpcollection.deleteMany({ email });
-      res.send({ message: "OTP verified. Logged in successfully." });
+      res.json({ message: "OTP verified. Logged in successfully." });
     });
 
     app.get("/login-history", async (req, res) => {

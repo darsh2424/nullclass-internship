@@ -41,8 +41,8 @@ const Signup = () => {
       const data = await res.json();
 
       if (data.acknowledged) {
-        console.log(data);
-        navigate("/");
+        // console.log(data);
+        navigate("/login");
       } else {
         window.alert("Registration to MongoDB failed.");
       }
