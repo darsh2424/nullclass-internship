@@ -30,7 +30,7 @@ const Signup = () => {
         password:password,
       };
 
-      const res = await fetch("http://localhost:5000/register", {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/register`, {
         method: "POST",
         headers: {
           "content-type": "application/json",

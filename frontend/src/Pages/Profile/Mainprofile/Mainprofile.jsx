@@ -29,7 +29,7 @@ const Mainprofile = () => {
   useEffect(() => {
     if (email) {
       console.log(email)
-      fetch(`http://localhost:5000/userpost?email=${email}`)
+      fetch(`${process.env.REACT_APP_BACKEND_URL}/userpost?email=${email}`)
         .then((res) => res.json())
         .then((data) => {
           console.log("User posts received:", data);
@@ -56,7 +56,7 @@ const Mainprofile = () => {
         };
         setisloading(false);
         if (url) {
-          fetch(`http://localhost:5000/userupdate/${email}`, {
+          fetch(`${process.env.REACT_APP_BACKEND_URL}/userupdate/${email}`, {
             method: "PATCH",
             headers: {
               "content-type": "application/json",
@@ -65,7 +65,7 @@ const Mainprofile = () => {
           })
             .then((res) => res.json())
             .then(() => {
-              return fetch(`http://localhost:5000/user?email=${loggedinuser?.email}`);
+              return fetch(`${process.env.REACT_APP_BACKEND_URL}/user?email=${loggedinuser?.email}`);
             })
             .then((res) => res.json())
             .then((data) => {
@@ -103,7 +103,7 @@ const Mainprofile = () => {
         };
         setisloading(false);
         if (url) {
-          fetch(`http://localhost:5000/userupdate/${email}`, {
+          fetch(`${process.env.REACT_APP_BACKEND_URL}/userupdate/${email}`, {
             method: "PATCH",
             headers: {
               "content-type": "application/json",
@@ -112,7 +112,7 @@ const Mainprofile = () => {
           })
             .then((res) => res.json())
             .then(() => {
-              return fetch(`http://localhost:5000/user?email=${loggedinuser?.email}`);
+              return fetch(`${process.env.REACT_APP_BACKEND_URL}/user?email=${loggedinuser?.email}`);
             })
             .then((res) => res.json())
             .then((data) => {
@@ -136,14 +136,14 @@ const Mainprofile = () => {
   const handleMenuClose = () => setAnchorEl(null);
 
   const handleRemovePhoto = () => {
-    fetch(`http://localhost:5000/userupdate/${email}`, {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/userupdate/${email}`, {
       method: "PATCH",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ profileImage: null }),
     })
       .then((res) => res.json())
       .then(() => {
-        return fetch(`http://localhost:5000/user?email=${loggedinuser?.email}`);
+        return fetch(`${process.env.REACT_APP_BACKEND_URL}/user?email=${loggedinuser?.email}`);
       })
       .then((res) => res.json())
       .then((data) => {
@@ -158,14 +158,14 @@ const Mainprofile = () => {
   };
 
   const handleAvatarSelect = (url) => {
-    fetch(`http://localhost:5000/userupdate/${email}`, {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/userupdate/${email}`, {
       method: "PATCH",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ profileImage: url }),
     })
       .then((res) => res.json())
       .then(() => {
-        return fetch(`http://localhost:5000/user?email=${loggedinuser?.email}`);
+        return fetch(`${process.env.REACT_APP_BACKEND_URL}/user?email=${loggedinuser?.email}`);
       })
       .then((res) => res.json())
       .then((data) => {

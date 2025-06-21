@@ -21,7 +21,7 @@ const Explore = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:5000/popular-users")
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/popular-users`)
       .then((res) => res.json())
       .then((data) => {
         setPopularUsers(data);
@@ -37,7 +37,7 @@ const Explore = () => {
     if (!query.trim()) return;
 
     setLoading(true);
-    fetch(`http://localhost:5000/search-users?q=${query}`)
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/search-users?q=${query}`)
       .then((res) => res.json())
       .then((data) => {
         setSearchResults(data);
@@ -53,7 +53,10 @@ const Explore = () => {
   const handleFollowToggle = async (username, isFollowing) => {
     const endpoint = isFollowing ? "/unfollow" : "/follow";
     try {
-      const res = await fetch(`http://localhost:5000${endpoint}`, {
+      const baseUrl = process.env.REACT_APP_BACKEND_URL?.replace(/\/$/, '');
+      const path = endpoint?.replace(/^\//, '');
+      const url = `${baseUrl}/${path}`;
+      const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

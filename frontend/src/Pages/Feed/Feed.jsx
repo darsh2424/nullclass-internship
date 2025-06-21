@@ -8,7 +8,7 @@ const Feed = () => {
   const [loggedinsuer] = useLoggedinuser();
 
   useEffect(() => {
-    fetch("http://localhost:5000/post")
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/post`)
       .then((res) => res.json())
       .then((data) => setPosts(data));
   }, []);

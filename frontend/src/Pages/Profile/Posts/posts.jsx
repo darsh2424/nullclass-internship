@@ -16,7 +16,7 @@ const Posts = ({ p, currentUserId, loggedInUsername, handleFollow }) => {
 
   const toggleLike = async () => {
     try {
-      const res = await fetch("http://localhost:5000/like", {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/like`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: currentUserId, postId: _id }),
@@ -34,7 +34,7 @@ const Posts = ({ p, currentUserId, loggedInUsername, handleFollow }) => {
 
   const toggleFollow = async () => {
     try {
-      const res = await fetch("http://localhost:5000/follow", {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/follow`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ currentUserId: currentUserId, targetUserId: username }),

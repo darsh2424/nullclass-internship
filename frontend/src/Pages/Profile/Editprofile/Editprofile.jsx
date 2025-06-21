@@ -77,7 +77,7 @@ const Editprofile = ({ loggedinuser, setLoggedinuser, handleProfileClick }) => {
 
   const handlesave = () => {
     const editinfo = { name, bio, location, website, dob };
-    fetch(`http://localhost:5000/userupdate/${loggedinuser?.email}`, {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/userupdate/${loggedinuser?.email}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -86,7 +86,7 @@ const Editprofile = ({ loggedinuser, setLoggedinuser, handleProfileClick }) => {
     })
       .then((res) => res.json())
       .then(() => {
-        return fetch(`http://localhost:5000/user?email=${loggedinuser?.email}`);
+        return fetch(`${process.env.REACT_APP_BACKEND_URL}/user?email=${loggedinuser?.email}`);
       })
       .then((res) => res.json())
       .then((data) => {
