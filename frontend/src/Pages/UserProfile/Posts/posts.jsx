@@ -14,7 +14,7 @@ const Posts = ({ p, currentUserId, loggedinUser, handleFollow }) => {
 
   const toggleLike = async () => {
     try {
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/like`, {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/like`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: currentUserId, postId: _id }),
@@ -33,7 +33,7 @@ const Posts = ({ p, currentUserId, loggedinUser, handleFollow }) => {
   const toggleFollow = async (username, isFollowing) => {
     const endpoint = isFollowing ? "/unfollow" : "/follow";
     try {
-      const baseUrl = process.env.REACT_APP_BACKEND_URL?.replace(/\/$/, '');
+      const baseUrl = import.meta.env.VITE_BACKEND_URL?.replace(/\/$/, '');
       const path = endpoint?.replace(/^\//, '');
       const url = `${baseUrl}/${path}`;
       const res = await fetch(url, {

@@ -14,7 +14,7 @@ export default function useLoggedinuser() {
       }
 
       try {
-        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/loggedinuser?email=${user.email}`);
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/loggedinuser?email=${user.email}`);
 
         if (res.ok) {
           const data = await res.json();
@@ -28,7 +28,7 @@ export default function useLoggedinuser() {
             password: null,
           };
 
-          const createRes = await fetch(`${process.env.REACT_APP_BACKEND_URL}/register`, {
+          const createRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/register`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json"

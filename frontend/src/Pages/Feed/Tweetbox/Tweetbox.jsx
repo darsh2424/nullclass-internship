@@ -31,7 +31,7 @@ const Tweetbox = ({ onNewPost }) => {
     const fetchCanPost = async () => {
       if (!loggedinsuer?._id) return;
       try {
-        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/can-post?userId=${loggedinsuer._id}`);
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/can-post?userId=${loggedinsuer._id}`);
         const data = await res.json();
         // setCanPost(data.canPost);
         setDenyReason(data.reason);
@@ -50,7 +50,7 @@ const Tweetbox = ({ onNewPost }) => {
     formData.set("image", image);
     axios
       .post(
-        process.env.REACT_APP_IMGBB_API_KEY,
+        import.meta.env.VITE_IMGBB_API_KEY,
         formData
       )
       .then((res) => {
@@ -73,7 +73,7 @@ const Tweetbox = ({ onNewPost }) => {
 
       if (user?.providerData?.[0]?.providerId === "password") {
 
-        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/loggedinuser?email=${email}`);
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/loggedinuser?email=${email}`);
         const data = await res.json();
 
         finalName = data?.name;
@@ -110,7 +110,7 @@ const Tweetbox = ({ onNewPost }) => {
       setimageurl("");
 
       // Send to backend
-      const postRes = await fetch(`${process.env.REACT_APP_BACKEND_URL}/post`, {
+      const postRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/post`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userpost),

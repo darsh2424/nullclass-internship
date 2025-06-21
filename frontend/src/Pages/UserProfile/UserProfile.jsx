@@ -17,7 +17,7 @@ const UserProfile = () => {
     const [posts, setPosts] = useState([]);
     const [loggedinuser] = useLoggedinuser();
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_BACKEND_URL}/user/${username}`)
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/user/${username}`)
             .then((res) => res.json())
             .then((data) => {
                 setProfileUser(data)
@@ -26,7 +26,7 @@ const UserProfile = () => {
     }, [username]);
     useEffect(() => {
         if (!profileUser?.email) return;
-        fetch(`${process.env.REACT_APP_BACKEND_URL}/userpost?email=${profileUser.email}`)
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/userpost?email=${profileUser.email}`)
             .then((res) => res.json())
             .then((data) => {
                 setPosts(data)

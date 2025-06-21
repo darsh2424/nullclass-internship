@@ -16,7 +16,7 @@ const Posts = ({ p, currentUserId, loggedInUsername }) => {
 
   const toggleLike = async () => {
     try {
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/like`, {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/like`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: currentUserId, postId: _id }),
@@ -34,7 +34,7 @@ const Posts = ({ p, currentUserId, loggedInUsername }) => {
 
   const handleFollow = async () => {
     try {
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/follow`, {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/follow`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ currentUsername: loggedInUsername, targetUsername: username }),
@@ -50,7 +50,7 @@ const Posts = ({ p, currentUserId, loggedInUsername }) => {
 
   const handleUnfollow = async () => {
     try {
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/unfollow`, {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/unfollow`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ currentUsername: loggedInUsername, targetUsername: username }),

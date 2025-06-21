@@ -19,13 +19,14 @@ const Login = () => {
     seterror("");
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/login`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
       });
+      // console.log(response)
 
       const data = await response.json();
 
@@ -37,7 +38,7 @@ const Login = () => {
       setManualUser(data.user.email, data.user);
       const loginDetails = await logInfo(data.user);
 
-      const logRes = await fetch(`${process.env.REACT_APP_BACKEND_URL}/logInfo`, {
+      const logRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/logInfo`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -62,11 +63,33 @@ const Login = () => {
   };
 
   const hanglegooglesignin = async (e) => {
-    if(loading) return
+    if (loading) return
     e.preventDefault();
     try {
-      await googleSignIn();
-      navigate("/");
+      const result = await googleSignIn();
+      const data = result; 
+
+      // console.log(data)
+      // Step 2: Prepare login details
+      const loginDetails = await logInfo(data.user); 
+
+      const logRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/logInfo`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: data.user.email,
+          ...loginDetails,
+        }),
+      });
+
+      const logData = await logRes.json();
+      setLoading(false);
+
+      if (logData.otpRequired) {
+        navigate("/otp");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
       console.log(error.message);
     }

@@ -1,13 +1,52 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/jpeg" href="/twitter.jpeg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Twitter Clone</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your App Name</title>
+  <style>
+    .notice-bar {
+      background-color: #fce8b2;
+      color: #5c4200;
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 0.4em;
+      font-family: sans-serif;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #f9f9f9;
+      color: #555;
+      text-align: center;
+      padding: 0.8em 0;
+      font-size: 0.9rem;
+      font-family: sans-serif;
+      box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Top Notice -->
+  <div class="notice-bar">
+    This app is made for learning purpose using free resources. On any actions please be patient and wait.
+  </div>
+
+  <!-- App Root -->
+  <div id="root"></div>
+
+  <!-- Footer -->
+  <footer>
+    Thanks for checking this out. For any issue, contact me: <strong>Darsh Parikh</strong> at
+    <a href="mailto:iamdarsh2424@gmail.com">iamdarsh2424@gmail.com</a>
+  </footer>
+
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
 </html>

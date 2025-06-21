@@ -51,7 +51,7 @@ export function UserAuthContextProvider(props) {
             if (currentuser?.email) {
                 try {
                     // 🔁 Standardizing to query-based fetch
-                    const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/loggedinuser?email=${currentuser.email}`);
+                    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/loggedinuser?email=${currentuser.email}`);
 
                     if (res.ok) {
                         const data = await res.json();
@@ -88,7 +88,7 @@ export function UserAuthContextProvider(props) {
                             createdAt: new Date(),
                         };
 
-                        const createRes = await fetch(`${process.env.REACT_APP_BACKEND_URL}/register`, {
+                        const createRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/register`, {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",

@@ -30,7 +30,7 @@ const Signup = () => {
         password:password,
       };
 
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/register`, {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/register`, {
         method: "POST",
         headers: {
           "content-type": "application/json",
