@@ -20,11 +20,14 @@
     padding: 0 15px;
     border-right: none;
   }
+  .profilePage{
+    flex:0.85 !important;
+    min-width: 95vw;
+  }
 }
 
 .profilePage {
   flex: 0.6;
-  width: fit-content;
   overflow-y: auto;
   border-right: 1px solid var(--twitter-background);
 }

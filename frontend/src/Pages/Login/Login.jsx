@@ -49,6 +49,11 @@ const Login = () => {
 
       const logData = await logRes.json();
       setLoading(false);
+      if(logData.device && logData.device=="mobile"){
+        alert("Mobile access allowed only from 10 AM to 1 PM");
+        setManualUser(null, null);
+        return 
+      }
       if (logData.otpRequired) {
         navigate("/otp");
       } else {
@@ -85,6 +90,12 @@ const Login = () => {
       const logData = await logRes.json();
       setLoading(false);
 
+      if(logData.device && logData.device=="mobile"){
+        alert("Mobile access allowed only from 10 AM to 1 PM");
+        setManualUser(null, null);
+        return 
+      }
+      
       if (logData.otpRequired) {
         navigate("/otp");
       } else {
@@ -139,15 +150,14 @@ const Login = () => {
               <GoogleButton className="g-btn" type="light" onClick={hanglegooglesignin} />
             </div>
           </div>
-          <div>
-            Don't have an account
+          <div className="navigation-div">
+            Don't have an account?
             <Link
               to="/signup"
               style={{
                 textDecoration: "none",
                 color: "var(--twitter-color)",
                 fontWeight: "600",
-                marginLeft: "5px",
               }}
             >
               Sign Up

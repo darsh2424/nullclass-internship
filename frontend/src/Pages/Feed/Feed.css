@@ -2,7 +2,7 @@
 .feed {
   flex: 0.6;
   border-right: 1px solid var(--twitter-background);
-  width: fit-content;
+  width:100%;
   overflow-y: auto;
   scroll-behavior: smooth;
   height: 100vh;

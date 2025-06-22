@@ -14,18 +14,20 @@ const Feed = () => {
   }, []);
 
   const handleNewPost = (newPost) => {
-    setPosts((prevPosts) => [newPost, ...prevPosts]); 
+    setPosts((prevPosts) => [newPost, ...prevPosts]);
   };
 
   return (
-    <div className="feed">
-      <div className="feed__header">
-        <h2>Home</h2>
+    <div className="profilePage">
+      <div className="feed">
+        <div className="feed__header">
+          <h2>Home</h2>
+        </div>
+        <Tweetbox onNewPost={handleNewPost} />
+        {loggedinsuer && posts.map((p) => (
+          <Posts key={p._id} p={p} currentUserId={loggedinsuer?._id} loggedInUsername={loggedinsuer?.username} />
+        ))}
       </div>
-      <Tweetbox onNewPost={handleNewPost} />
-      {loggedinsuer && posts.map((p) => (
-        <Posts key={p._id} p={p} currentUserId={loggedinsuer?._id} loggedInUsername={loggedinsuer?.username} />
-      ))}
     </div>
   );
 };

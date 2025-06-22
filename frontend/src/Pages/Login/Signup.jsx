@@ -106,16 +106,17 @@ const Signup = () => {
                   Sign Up
                 </button>
               </div>
-            </form>
-            <hr />
-            <div className="google-button">
+              <div className="google-button">
               <GoogleButton
                 className="g-btn"
                 type="light"
                 onClick={hanglegooglesignin}
               />
             </div>
-            <div>
+            </form>
+            <hr />
+            
+            <div className="navigation-div">
               Already have an account?
               <Link
                 to="/login"

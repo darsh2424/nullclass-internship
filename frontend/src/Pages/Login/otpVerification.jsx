@@ -74,7 +74,8 @@ const OtpVerification = () => {
                         />
                         <button type="submit" className="btn">Verify OTP</button>
                     </form>
-                    <div>
+                </div>
+                <div className="navigation-div">
 
                         <Link
                             to="/login"
@@ -88,7 +89,6 @@ const OtpVerification = () => {
                             Back To Login
                         </Link>
                     </div>
-                </div>
             </div>
         </div>
     );

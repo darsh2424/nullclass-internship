@@ -26,7 +26,11 @@ const Notification = () => {
 
       for (const userId of loggedinuser.followings) {
         try {
-          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/${userId}`);
+          const baseUrl = import.meta.env.VITE_BACKEND_URL?.replace(/\/$/, '');
+          const endpoint=`/userWithId/${userId}`
+          const path = endpoint?.replace(/^\//, '');
+          const url = `${baseUrl}/${path}`;
+          const res = await fetch(`${url}`);
           const data = await res.json();
 
           if (!res.ok) {

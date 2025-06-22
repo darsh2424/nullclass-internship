@@ -90,6 +90,7 @@ const Mainprofile = () => {
     const image = e.target.files[0];
     const formData = new FormData();
     formData.set("image", image);
+    console.log(import.meta.env.VITE_IMGBB_API_KEY)
     axios
       .post(
         import.meta.env.VITE_IMGBB_API_KEY,

@@ -39,10 +39,15 @@ export function UserAuthContextProvider(props) {
         return signInWithPopup(auth, provider);
     }
 
-    function setManualUser(email, details = null) {
+function setManualUser(email, details = null) {
+    if (!email || !details) {
+        setUser(null);
+        setUserDetails(null);
+    } else {
         setUser({ email });
         setUserDetails(details);
     }
+}
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentuser) => {
