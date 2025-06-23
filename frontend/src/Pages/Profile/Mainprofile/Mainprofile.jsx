@@ -278,6 +278,14 @@ const Mainprofile = () => {
                 <div>
                   <h3 className="heading-3">{loggedinuser?.name || ""}</h3>
                   <p className="usernameSection">@{loggedinuser?.username || ""}</p>
+                  <div style={
+                    {
+                      display: "flex"
+                    }
+                  }>
+                    <p className="usernameSection">Followers : {loggedinuser?.followers.length ?? 0}</p>
+                    <p className="usernameSection">Followings : {loggedinuser?.followings.length ?? 0}</p>
+                  </div>
                 </div>
                 <Editprofile loggedinuser={loggedinuser} setLoggedinuser={setLoggedinuser} handleProfileClick={handleProfileClick} />
               </div>
@@ -306,7 +314,7 @@ const Mainprofile = () => {
 
             {/* Posts */}
             {post.map((p) => (
-              <Post key={p._id} p={p} currentUserId={loggedinuser?._id} loggedInUsername={loggedinuser?.username}  />
+              <Post key={p._id} p={p} currentUserId={loggedinuser?._id} loggedInUsername={loggedinuser?.username} />
             ))}
           </div>
         </div>

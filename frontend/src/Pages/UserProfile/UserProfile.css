@@ -93,9 +93,6 @@
 /* -------------------- User Info -------------------- */
 .userInfo {
   margin-top: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
 }
 .heading-3 {
   font-size: 24px;

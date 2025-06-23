@@ -93,9 +93,9 @@
 /* -------------------- User Info -------------------- */
 .userInfo {
   margin-top: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
 }
 .heading-3 {
   font-size: 24px;

@@ -1,6 +1,6 @@
 // import logo from "./logo.svg";
 import "./App.css";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./Pages/Home";
 import Login from "./Pages/Login/Login";
 import Signup from "./Pages/Login/Signup";
@@ -21,6 +21,11 @@ function App() {
     <div className="app">
       <UserAuthContextProvider>
         <Routes>
+          <Route path="*" element={<Navigate to="/" />} />
+          <Route path="/" exact element={<ProtectedRoute>
+                {" "}
+                <Home />
+              </ProtectedRoute>} />
           <Route
             path="/"
             element={

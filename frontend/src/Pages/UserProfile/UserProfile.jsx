@@ -76,6 +76,14 @@ const UserProfile = () => {
                                 <h3 className="heading-3">{profileUser.name || "Unnamed"}</h3>
                                 <p className="usernameSection">@{profileUser.username}</p>
                             </div>
+                            <div style={
+                                    {
+                                        display: "flex"
+                                    }
+                                }>
+                                    <p className="usernameSection">Followers : {profileUser?.followers.length ?? 0}</p>
+                                    <p className="usernameSection">Followings : {profileUser?.followings.length ?? 0}</p>
+                                </div>
 
                             {/* Bio and Links */}
                             <div className="infoContainer">
