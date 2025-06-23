@@ -361,7 +361,7 @@ async function run() {
           createdAt: new Date(),
           likes: [],
         };
-        await postcollection.insertOne(newPost);
+        // await postcollection.insertOne(newPost);
 
         const result = await postcollection.insertOne(newPost);
         newPost._id = result.insertedId;
