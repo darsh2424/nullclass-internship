@@ -40,9 +40,20 @@ async function run() {
 
     app.post("/register", async (req, res) => {
       try {
-        const { username, name, email, password } = req.body;
+        const {
+          username, name, email, password,
+          followers = [], followings = [],
+          bio = null, dob = null, location = null, website = null,
+          profileImage = null, coverImage = null,
+          dailyPostInfo = {
+            date: new Date().toISOString().split('T')[0],
+            count: 0,
+          },
+          lastPostAt = null,
+          createdAt = new Date(),
+        } = req.body;
 
-        if (!username || !name || !email || !password) {
+        if (!username || !name || !email) {
           return res.status(400).send({ error: "Missing required fields" });
         }
 
@@ -54,33 +65,30 @@ async function run() {
           return res.status(400).send({ error: "Email or username already exists" });
         }
 
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        const hashedPassword = password ? await bcrypt.hash(password, saltRounds) : null;
 
         const newUser = {
           username,
           name,
           email,
           password: hashedPassword,
-          followers: [],
-          followings: [],
-          bio: null,
-          dob: null,
-          location: null,
-          website: null,
-          profileImage: null,
-          coverImage: null,
-          dailyPostInfo: {
-            date: new Date().toISOString().split('T')[0],
-            count: 0,
-          },
-          lastPostAt: null,
-          createdAt: new Date(),
+          followers,
+          followings,
+          bio,
+          dob,
+          location,
+          website,
+          profileImage,
+          coverImage,
+          dailyPostInfo,
+          lastPostAt,
+          createdAt,
         };
 
         const result = await usercollection.insertOne(newUser);
 
         if (result.acknowledged) {
-          res.status(201).send({ acknowledged: true, insertedId: result.insertedId });
+          res.status(201).send({ acknowledged: true, insertedId: result.insertedId, user: newUser });
         } else {
           res.status(500).send({ error: "Failed to register user" });
         }
@@ -89,6 +97,7 @@ async function run() {
         res.status(500).send({ error: "Internal server error" });
       }
     });
+
     app.post("/login", async (req, res) => {
       try {
         const { email, password } = req.body;
@@ -152,6 +161,7 @@ async function run() {
     }
     app.post("/verify-otp", async (req, res) => {
       const { email, otp, browser, os, device, ip } = req.body;
+      // console.log(req.body)
       const record = await otpcollection.findOne({ email, otp: parseInt(otp), createdAt: { $gte: new Date(Date.now() - 5 * 60 * 1000) }, });
       if (!record) return res.status(401).json({ error: "Invalid OTP" });
 
